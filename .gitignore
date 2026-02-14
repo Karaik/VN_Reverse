@@ -1,0 +1,158 @@
+﻿# ==============================
+# VN_Reverse unified .gitignore
+# Multi-language + Multi-IDE + Reverse workflow
+# ==============================
+
+# ---------- OS junk ----------
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.Spotlight-V100/
+.Trashes/
+
+# ---------- Editor / IDE ----------
+.idea/
+*.iml
+.vscode/
+*.code-workspace
+
+# Vim / Emacs temp
+*.swp
+*.swo
+*~
+
+# ---------- Logs / temp / cache ----------
+*.log
+*.tmp
+*.temp
+*.cache
+.cache/
+.tmp/
+tmp/
+temp/
+logs/
+
+# ---------- Environment / secrets ----------
+.env
+.env.*
+*.secret
+*.key
+*.pem
+
+# ---------- Java / Maven / Gradle ----------
+*.class
+*.jar
+*.war
+*.ear
+*.jpi
+target/
+out/
+build/
+.gradle/
+.mvn/wrapper/maven-wrapper.jar
+
+# ---------- Kotlin ----------
+.kotlin/
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.python-version
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+
+# ---------- Node / JS / TS ----------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+.next/
+.nuxt/
+dist/
+coverage/
+
+# ---------- Rust ----------
+/target/
+Cargo.lock
+
+# ---------- C / C++ / CMake ----------
+*.o
+*.obj
+*.so
+*.dll
+*.dylib
+*.a
+*.lib
+*.exe
+*.pdb
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+compile_commands.json
+
+# ---------- Reverse engineering tools ----------
+# IDA
+*.id0
+*.id1
+*.id2
+*.nam
+*.til
+*.i64
+*.idb
+
+# Ghidra project internals
+*.rep
+*.gpr
+*.gzf
+
+# radare2 / cutter / binary ninja common caches
+*.r2
+*.r2.*
+*.bndb
+
+# ---------- Large extracted/generated artifacts ----------
+# Keep raw sample management explicit; prefer Git LFS if needed.
+*.pacNew
+*.pak
+*.cpk
+*.vpk
+*.xp3
+*.pfs
+
+# Extraction / decompile / conversion outputs
+extracted/
+unpacked/
+decompiled/
+decoded/
+repacked/
+converted/
+generated/
+reports/
+
+# ---------- Runtime / test outputs ----------
+*.pid
+*.seed
+*.pid.lock
+*.out
+
+# ---------- Git submodule / workspace helpers ----------
+# If used as local workspace cache (do not commit clones)
+.external/
+.worktrees/
+
+# ---------- Keep docs and source by default ----------
+# (No broad wildcard rules like *.json / *.bin here on purpose.)

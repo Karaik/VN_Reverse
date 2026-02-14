@@ -1,0 +1,6 @@
+[submodule "engines/NeXAS/NeXAS_DX"]
+	path = engines/NeXAS/NeXAS_DX
+	url = https://github.com/Karaik/NeXAS_DX
+[submodule "engines/NeXAS/NeXAS_SPM_VIEWER"]
+	path = engines/NeXAS/NeXAS_SPM_VIEWER
+	url = https://github.com/Karaik/NeXAS_SPM_VIEWER
