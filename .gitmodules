@@ -7,6 +7,3 @@
 [submodule "titles/mushiai_chineseization"]
 	path = titles/mushiai_chineseization
 	url = https://github.com/Karaik/mushiai_chineseization
-[submodule "titles/mushiai_fd_chineseization"]
-	path = titles/mushiai_fd_chineseization
-	url = https://github.com/Karaik/mushiai_fd_chineseization.git
