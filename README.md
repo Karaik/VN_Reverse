@@ -33,6 +33,10 @@ git submodule update --init --recursive
 
 - `mushiai_chineseization`  
   路径：[`titles/mushiai_chineseization`](./titles/mushiai_chineseization)
+- `夏幻の恋`  
+  路径：[`titles/夏幻の恋`](./titles/夏幻の恋)  
+  工具：`adb_decompile.py`、`adb_compile.py`、`adb_to_adbsrc.py`、`csaf_unpack.py`、`csaf_pack.py`、`regression_test.py`  
+  文档：[`titles/夏幻の恋/README.md`](./titles/夏幻の恋/README.md)
 
 ## 目录
 
@@ -44,7 +48,8 @@ VN_Reverse/
 |   |   `-- NeXAS_SPM_VIEWER/
 |   `-- SystemNNN/
 |-- titles/
-|   `-- mushiai_chineseization/
+|   |-- mushiai_chineseization/
+|   `-- 夏幻の恋/
 |-- .gitmodules
 |-- .gitignore
 `-- README.md
