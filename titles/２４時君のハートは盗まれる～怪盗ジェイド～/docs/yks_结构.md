@@ -56,6 +56,41 @@
 - `flow[]`：执行流（`index -> entry_id`）
 - `text_encoding`：文本解码/回写编码，默认 `cp932`
 
+### OP 字段说明
+
+- 该格式不是“单字节 opcode 顺序流”，而是 `entries + token 池` 的组合执行模型。
+- 在当前工具输出中：
+  - `entries[].type_u32`：槽类型/操作类别
+  - `entries[].op_text`：从 `a_token_id` 解析出的操作名（如 `GraphicLoad`、`SoundPlay`）
+  - `entries[].a_token_text/b_token_text`：对应 token 文本，便于直接查看参数
+- `ykssrc` 里会在 `@entry` 前写注释 `; entry N op=...`，用于快速阅读，不影响回编。
+
+### 已提取 OP（当前样本）
+
+- `DrawStart`
+- `DrawStop`
+- `GraphicDelete`
+- `GraphicHide`
+- `GraphicLoad`
+- `GraphicScroll`
+- `GraphicScrollWait`
+- `GraphicShow`
+- `HistoryReset`
+- `KeyWait`
+- `LF`
+- `MoviePlay`
+- `PF`
+- `ScriptJump`
+- `SoundLoad`
+- `SoundLoadStream`
+- `SoundPlay`
+- `SoundPlayLoop`
+- `SoundStop`
+- `StrOut`
+- `Transition`
+- `Wait`
+- `WindowNameSet`
+
 ## 编译规则
 
 1. 先重建 token 池并记录新偏移
@@ -85,10 +120,10 @@
 
 ```mermaid
 flowchart TD
-    A[Header] --> B[table1 u32[]]
+    A[Header] --> B[table1 u32 array]
     B --> C[entries 16-byte]
     C --> D[blob token pool]
-    D --> E[token offsets back to entries]
+    D --> E[token offsets referenced by entries]
 ```
 
 ## 工具对应

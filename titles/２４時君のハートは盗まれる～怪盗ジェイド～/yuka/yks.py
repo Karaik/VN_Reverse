@@ -17,6 +17,7 @@ TEXT_ENCODING_ALIASES = {
     "sjis": CP932,
     "ms932": CP932,
 }
+OP_NAME_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
 
 def _has_cjk(text: str) -> bool:
@@ -125,6 +126,11 @@ def parse_yks(data: bytes, text_encoding: str = DEFAULT_TEXT_ENCODING) -> dict:
             }
         )
 
+    token_text_by_id: dict[int, str] = {}
+    for token in tokens:
+        if bool(token.get("decoded_text", False)):
+            token_text_by_id[int(token["token_id"])] = str(token.get("text", ""))
+
     out_entries: list[dict] = []
     for i, row in enumerate(entries):
         t, a, b, c = [int(v) for v in row]
@@ -139,6 +145,16 @@ def parse_yks(data: bytes, text_encoding: str = DEFAULT_TEXT_ENCODING) -> dict:
             item["a_token_id"] = off_to_token[a]
         if b in off_to_token:
             item["b_token_id"] = off_to_token[b]
+        if "a_token_id" in item:
+            a_text = token_text_by_id.get(int(item["a_token_id"]), "")
+            if a_text:
+                item["a_token_text"] = a_text
+                if t == 0 and OP_NAME_RE.match(a_text):
+                    item["op_text"] = a_text
+        if "b_token_id" in item:
+            b_text = token_text_by_id.get(int(item["b_token_id"]), "")
+            if b_text:
+                item["b_token_text"] = b_text
         out_entries.append(item)
 
     flow = [{"index": i, "entry_id": int(v)} for i, v in enumerate(table1)]
@@ -282,6 +298,9 @@ def render_ykssrc(doc: dict) -> str:
     for token in list(doc.get("tokens", [])):
         lines.append("@token " + json.dumps(token, ensure_ascii=False, separators=(",", ":")))
     for entry in list(doc.get("entries", [])):
+        op_text = str(entry.get("op_text", "")).strip()
+        if op_text:
+            lines.append(f"; entry {int(entry.get('entry_id', -1))} op={op_text}")
         lines.append("@entry " + json.dumps(entry, ensure_ascii=False, separators=(",", ":")))
     for flow in list(doc.get("flow", [])):
         lines.append("@flow " + json.dumps(flow, ensure_ascii=False, separators=(",", ":")))
