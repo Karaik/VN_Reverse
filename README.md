@@ -35,6 +35,7 @@ git submodule update --init --recursive
 |---|---|---|---|---|
 | `SystemNNN` | `mushiai_chineseization` | [`titles/mushiai_chineseization`](./titles/mushiai_chineseization) | [`README.md`](./titles/mushiai_chineseization/README.md) | |
 | `Family Adv System` | `夏幻の恋` | [`titles/夏幻の恋`](./titles/夏幻の恋) | [`README.md`](./titles/夏幻の恋/README.md) | [`adb_结构.md`](./titles/夏幻の恋/docs/adb_结构.md)、[`csaf_结构.md`](./titles/夏幻の恋/docs/csaf_结构.md) |
+| `Yuka engine` | `２４時君のハートは盗まれる～怪盗ジェイド～` | [`titles/２４時君のハートは盗まれる～怪盗ジェイド～`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～) | [`README.md`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～/README.md) | [`yks_结构.md`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～/docs/yks_结构.md)、[`ykc_结构.md`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～/docs/ykc_结构.md) |
 
 ## 目录
 
@@ -47,7 +48,8 @@ VN_Reverse/
 |   `-- SystemNNN/
 |-- titles/
 |   |-- mushiai_chineseization/
-|   `-- 夏幻の恋/
+|   |-- 夏幻の恋/
+|   `-- ２４時君のハートは盗まれる～怪盗ジェイド～/
 |-- .gitmodules
 |-- .gitignore
 `-- README.md
