@@ -135,6 +135,7 @@ python .\csaf_pack.py .\out\adv_unpacked\manifest.json .\out\adv_repack --update
 - ADB raw：`parse_adb -> compile_adb` 字节一致
 - ADB ir：`parse_adb_ir -> compile_adb` 字节一致
 - ADBSRC：`parse_adb_ir -> render_ir_adbsrc -> parse_adbsrc -> compile_adb` 字节一致
+- 文本变长：修改 `0x0601` 文本后重新编译，验证可再次反编译且文本一致（覆盖长度/偏移重算）
 - CSAF：`unpack -> pack` 字节一致（默认 `adv`、`system`）
 
 运行：
