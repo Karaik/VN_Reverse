@@ -1,15 +1,27 @@
-﻿## 目录说明
+# 夏幻の恋（Family Adv System）
 
-- `adb_decompile.py`：ADB 反编译主入口（默认输出 JSON，可选 ADBSRC）
-- `adb_compile.py`：脚本编译主入口（默认输入 JSON，也支持 ADBSRC）
-- `adb_to_adbsrc.py`：快捷导出 ADBSRC（等价于 `adb_decompile.py --output-format adbsrc --mode ir`）
-- `adb_to_json.py`：兼容入口，等价于 `adb_decompile.py`
-- `json_to_adb.py`：兼容入口，等价于 `adb_compile.py`
-- `csaf_unpack.py`：CSAF 解包
-- `csaf_pack.py`：CSAF 回封
-- `regression_test.py`：全量回归测试
-- `docs/adb_结构.md`：ADB/NBDA 结构文档
-- `docs/csaf_结构.md`：CSAF 结构文档
+Family Adv System 引擎的游戏，目前只针对《夏幻の恋》完成验证。
+
+## 工具说明
+
+| 工具 | 作用 | 输入 | 输出 |
+|---|---|---|---|
+| `adb_decompile.py` | ADB 反编译主入口，支持 JSON 与 ADBSRC 两种格式 | `.adb` 文件或目录 | `.json`（默认）或 `.adbsrc` |
+| `adb_compile.py` | 脚本编译主入口，支持 JSON 与 ADBSRC 两种输入 | `.json` / `.adbsrc` 文件或目录 | `.adb` |
+| `adb_to_adbsrc.py` | ADBSRC 快捷导出入口（内部调用 `adb_decompile.py`） | `.adb` 文件或目录 | `.adbsrc` |
+| `adb_to_json.py` | 兼容入口，行为等价 `adb_decompile.py` | `.adb` 文件或目录 | `.json` |
+| `json_to_adb.py` | 兼容入口，行为等价 `adb_compile.py` | `.json` 文件或目录 | `.adb` |
+| `csaf_unpack.py` | 解包 CSAF 资源包并生成清单 | `adv/system` 等包文件 | `manifest.json` + `files/` |
+| `csaf_pack.py` | 按清单回封 CSAF 资源包 | `manifest.json` + `files/` | CSAF 包文件 |
+| `regression_test.py` | 全量回归测试（raw/ir/adbsrc/文本变长/csaf） | 游戏目录 | `PASS` 或失败信息 |
+
+## 文档入口
+
+| 文档 | 说明 |
+|---|---|
+| [`README.md`](./README.md) | 本工具总览与用法 |
+| [`docs/adb_结构.md`](./docs/adb_结构.md) | NBDA/ADB 脚本结构、指令模型、ADBSRC 规则 |
+| [`docs/csaf_结构.md`](./docs/csaf_结构.md) | CSAF 封包结构与回封规则 |
 
 ## 代码分层
 

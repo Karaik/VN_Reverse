@@ -31,12 +31,10 @@ git submodule update --init --recursive
 
 ### titles
 
-- `mushiai_chineseization`  
-  路径：[`titles/mushiai_chineseization`](./titles/mushiai_chineseization)
-- `夏幻の恋`  
-  路径：[`titles/夏幻の恋`](./titles/夏幻の恋)  
-  工具：`adb_decompile.py`、`adb_compile.py`、`adb_to_adbsrc.py`、`csaf_unpack.py`、`csaf_pack.py`、`regression_test.py`  
-  文档：[`titles/夏幻の恋/README.md`](./titles/夏幻の恋/README.md)
+| 引擎 | 游戏/项目 | 路径 | 内部 README | 结构文档（非子库） |
+|---|---|---|---|---|
+| `SystemNNN` | `mushiai_chineseization` | [`titles/mushiai_chineseization`](./titles/mushiai_chineseization) | [`README.md`](./titles/mushiai_chineseization/README.md) | |
+| `Family Adv System` | `夏幻の恋` | [`titles/夏幻の恋`](./titles/夏幻の恋) | [`README.md`](./titles/夏幻の恋/README.md) | [`adb_结构.md`](./titles/夏幻の恋/docs/adb_结构.md)、[`csaf_结构.md`](./titles/夏幻の恋/docs/csaf_结构.md) |
 
 ## 目录
 
