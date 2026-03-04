@@ -34,6 +34,7 @@ git submodule update --init --recursive
 | 引擎 | 游戏/项目 | 路径 | 内部 README | 结构文档（非子库） |
 |---|---|---|---|---|
 | `SystemNNN` | `mushiai_chineseization` | [`titles/mushiai_chineseization`](./titles/mushiai_chineseization) | [`README.md`](./titles/mushiai_chineseization/README.md) | |
+| `kirikiri` | `真愛の百合は赤く染まる` | [`titles/真愛の百合は赤く染まる`](./titles/真愛の百合は赤く染まる) | [`README.md`](./titles/真愛の百合は赤く染まる/README.md) | |
 | `Family Adv System` | `夏幻の恋` | [`titles/夏幻の恋`](./titles/夏幻の恋) | [`README.md`](./titles/夏幻の恋/README.md) | [`adb_结构.md`](./titles/夏幻の恋/docs/adb_结构.md)、[`csaf_结构.md`](./titles/夏幻の恋/docs/csaf_结构.md) |
 | `Yuka engine` | `２４時君のハートは盗まれる～怪盗ジェイド～` | [`titles/２４時君のハートは盗まれる～怪盗ジェイド～`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～) | [`README.md`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～/README.md) | [`yks_结构.md`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～/docs/yks_结构.md)、[`ykc_结构.md`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～/docs/ykc_结构.md) |
 | `NEJII` | `比翼は愛薊の彼方へ 久遠の想` | [`titles/比翼は愛薊の彼方へ 久遠の想`](./titles/比翼は愛薊の彼方へ%20久遠の想) | [`README.md`](./titles/比翼は愛薊の彼方へ%20久遠の想/README.md) | [`rk1_结构.md`](./titles/比翼は愛薊の彼方へ%20久遠の想/docs/rk1_结构.md)、[`script_bin_结构.md`](./titles/比翼は愛薊の彼方へ%20久遠の想/docs/script_bin_结构.md) |
@@ -49,6 +50,7 @@ VN_Reverse/
 |   `-- SystemNNN/
 |-- titles/
 |   |-- mushiai_chineseization/
+|   |-- 真愛の百合は赤く染まる/
 |   |-- 夏幻の恋/
 |   |-- 比翼は愛薊の彼方へ 久遠の想/
 |   `-- ２４時君のハートは盗まれる～怪盗ジェイド～/
