@@ -156,3 +156,5 @@ reports/
 
 # ---------- Keep docs and source by default ----------
 # (No broad wildcard rules like *.json / *.bin here on purpose.)
+game/
+example/
