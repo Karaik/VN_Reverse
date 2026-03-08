@@ -29,15 +29,24 @@ git submodule update --init --recursive
 - `SystemNNN`
   - 预留入口，后续按同层级追加模块。
 
+### skills
+
+- `galgame-localization`
+  - `vn-localization-project`  
+    路径：[`skills/galgame-localization/vn-localization-project`](./skills/galgame-localization/vn-localization-project)
+- `reverse-engineering`
+  - 路径：[`skills/reverse-engineering`](./skills/reverse-engineering)
+
 ### titles
 
-| 引擎 | 游戏/项目 | 路径 | 内部 README | 结构文档（非子库） |
+| 引擎 | 游戏/项目 | 路径/仓库 | 内部 README | 结构文档 |
 |---|---|---|---|---|
-| `SystemNNN` | `mushiai_chineseization` | [`titles/mushiai_chineseization`](./titles/mushiai_chineseization) | [`README.md`](./titles/mushiai_chineseization/README.md) | |
-| `kirikiri` | `真愛の百合は赤く染まる` | [`titles/真愛の百合は赤く染まる`](./titles/真愛の百合は赤く染まる) | [`README.md`](./titles/真愛の百合は赤く染まる/README.md) | |
-| `Family Adv System` | `夏幻の恋` | [`titles/夏幻の恋`](./titles/夏幻の恋) | [`README.md`](./titles/夏幻の恋/README.md) | [`adb_结构.md`](./titles/夏幻の恋/docs/adb_结构.md)、[`csaf_结构.md`](./titles/夏幻の恋/docs/csaf_结构.md) |
-| `Yuka engine` | `２４時君のハートは盗まれる～怪盗ジェイド～` | [`titles/２４時君のハートは盗まれる～怪盗ジェイド～`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～) | [`README.md`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～/README.md) | [`yks_结构.md`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～/docs/yks_结构.md)、[`ykc_结构.md`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～/docs/ykc_结构.md) |
-| `NEJII` | `比翼は愛薊の彼方へ 久遠の想` | [`titles/比翼は愛薊の彼方へ 久遠の想`](./titles/比翼は愛薊の彼方へ%20久遠の想) | [`README.md`](./titles/比翼は愛薊の彼方へ%20久遠の想/README.md) | [`rk1_结构.md`](./titles/比翼は愛薊の彼方へ%20久遠の想/docs/rk1_结构.md)、[`script_bin_结构.md`](./titles/比翼は愛薊の彼方へ%20久遠の想/docs/script_bin_结构.md) |
+| `SystemNNN` | `虫爱少女汉化项目` | [`mushiai_chineseization`](./titles/mushiai_chineseization) | [`README.md`](./titles/mushiai_chineseization/README.md) | |
+| `SystemNNN` | `虫爱少女 FD 汉化项目` | [`mushiai_fd_chineseization`](./titles/mushiai_fd_chineseization) | [`README.md`](./titles/mushiai_fd_chineseization/README.md) | |
+| `kirikiri` | `真愛の百合は赤く染まる` | [`manakashi_chineseization`](./titles/真愛の百合は赤く染まる) | [`README.md`](./titles/真愛の百合は赤く染まる/README.md) | |
+| `Family Adv System` | `夏幻の恋`                  | [`夏幻の恋`](./titles/夏幻の恋)                                     | [`README.md`](./titles/夏幻の恋/README.md)                  | [`adb_结构.md`](./titles/夏幻の恋/docs/adb_结构.md)、[`csaf_结构.md`](./titles/夏幻の恋/docs/csaf_结构.md) |
+| `Yuka engine` | `２４時君のハートは盗まれる～怪盗ジェイド～` | [`２４時君のハートは盗まれる～怪盗ジェイド～`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～)   | [`README.md`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～/README.md) | [`yks_结构.md`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～/docs/yks_结构.md)、[`ykc_结构.md`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～/docs/ykc_结构.md) |
+| `NEJII` | `比翼は愛薊の彼方へ 久遠の想`        | [`比翼は愛薊の彼方へ 久遠の想`](./titles/比翼は愛薊の彼方へ%20久遠の想)               | [`README.md`](./titles/比翼は愛薊の彼方へ%20久遠の想/README.md)      | [`rk1_结构.md`](./titles/比翼は愛薊の彼方へ%20久遠の想/docs/rk1_结构.md)、[`script_bin_结构.md`](./titles/比翼は愛薊の彼方へ%20久遠の想/docs/script_bin_结构.md) |
 
 ## 目录
 
@@ -48,8 +57,12 @@ VN_Reverse/
 |   |   |-- NeXAS_DX/
 |   |   `-- NeXAS_SPM_VIEWER/
 |   `-- SystemNNN/
+|-- skills/
+|   |-- galgame-localization/
+|   `-- reverse-engineering/
 |-- titles/
 |   |-- mushiai_chineseization/
+|   |-- mushiai_fd_chineseization/
 |   |-- 真愛の百合は赤く染まる/
 |   |-- 夏幻の恋/
 |   |-- 比翼は愛薊の彼方へ 久遠の想/
