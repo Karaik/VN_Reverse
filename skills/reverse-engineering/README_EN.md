@@ -1,133 +1,51 @@
 English | [中文](README.md)
 
-# Reverse Engineering Skills for Claude Code
+# reverse-engineering
 
-A Claude Code plugin marketplace providing reverse engineering skills.
+## Purpose
 
-**Designed to work with [IDA-NO-MCP](https://github.com/P4nda0s/IDA-NO-MCP)** - Export IDA decompilation results, then analyze with Claude Code.
+This category contains capability-oriented reverse-engineering skills.
 
-## Workflow
+These skills are meant for focused analysis tasks. They do not define the full layout of a title project, and they do not replace a localization pipeline.
 
-1. **Export from IDA** using [IDA-NO-MCP](https://github.com/P4nda0s/IDA-NO-MCP) plugin (`Ctrl-Shift-E`)
-2. **Open exported directory** with Claude Code
-3. **Use skills** to analyze symbols and structures
+## Source
 
-### Exported Directory Structure (by IDA-NO-MCP)
+- Upstream repository: [`P4nda0s/reverse-skills`](https://github.com/P4nda0s/reverse-skills)
+- Why it is kept here: it serves as the local `reverse-engineering` skill category for this repository
+- Current doc state: this README has been rewritten to match `VN_Reverse` repository usage instead of the upstream plugin-marketplace presentation
 
-```
-export_dir/
-├── decompile/              # Decompiled C code
-│   ├── 0x401000.c          # One file per function, named by hex address
-│   ├── 0x401234.c
-│   └── ...
-├── decompile_failed.txt    # Failed decompilation list
-├── decompile_skipped.txt   # Skipped functions list
-├── strings.txt             # String table (address, length, type, content)
-├── imports.txt             # Import table (address:function_name)
-├── exports.txt             # Export table (address:function_name)
-└── memory/                 # Memory hexdump (1MB chunks)
-```
+## Current skills
 
-### Function File Format (decompile/*.c)
+- `rev-symbol`
+  - Recover likely function names from code patterns, strings, imports, exports, and call context.
+- `rev-struct`
+  - Reconstruct data structures from memory access patterns across functions and call chains.
 
-```c
-/*
- * func-name: sub_401000
- * func-address: 0x401000
- * callers: 0x402000, 0x403000    // Who calls this function
- * callees: 0x404000, 0x405000    // What this function calls
- */
+## When to use
 
-int __fastcall sub_401000(int a1, int a2)
-{
-    // Decompiled code...
-}
-```
+- You already have decompiled output and need to analyze a specific function or call chain.
+- You want to recover better symbol names from constants, strings, and usage context.
+- You want to infer structure layouts from offset-based reads and writes.
 
-## Skills Included
+## Expected input
 
-| Skill | Description |
-|-------|-------------|
-| `/reverse-engineering:rev-symbol` | Analyze function symbols from exports/imports or decompiled code |
-| `/reverse-engineering:rev-struct` | Reconstruct data structures from decompiled functions |
+These skills currently assume an IDA-NO-MCP style export directory, usually including:
 
-## Installation
+- `decompile/`
+- `strings.txt`
+- `imports.txt`
+- `exports.txt`
+- `memory/`
 
-### Add the Marketplace
+## Out of scope
 
-```bash
-# From GitHub
-/plugin marketplace add pandaos/reverse-skills
+This category does not define:
 
-# From local path (for development)
-/plugin marketplace add /path/to/reverse-skills
-```
+- title-level project scaffolding
+- localization packaging pipelines
+- runtime patch layout
+- long-term project state tracking
 
-### Install the Plugin
+For title-level localization workflow, see:
 
-```bash
-/plugin install reverse-engineering@reverse-engineering-skills
-```
-
-## Usage
-
-### Analyze a Symbol
-
-```
-/reverse-engineering:rev-symbol sub_401000
-```
-
-### Reconstruct a Structure
-
-```
-/reverse-engineering:rev-struct sub_401000
-```
-
-## Directory Structure
-
-```
-reverse-skills/
-├── .claude-plugin/
-│   └── marketplace.json          # Marketplace catalog
-├── plugins/
-│   └── reverse-engineering/
-│       ├── .claude-plugin/
-│       │   └── plugin.json       # Plugin manifest
-│       └── skills/
-│           ├── rev-symbol/
-│           │   └── SKILL.md      # Symbol analysis skill
-│           └── rev-struct/
-│               └── SKILL.md      # Structure reconstruction skill
-└── README.md
-```
-
-## Development
-
-### Validate the Marketplace
-
-```bash
-claude plugin validate .
-```
-
-Or within Claude Code:
-
-```
-/plugin validate .
-```
-
-### Test Locally
-
-```bash
-/plugin marketplace add ./reverse-skills
-/plugin install reverse-engineering@reverse-engineering-skills
-```
-
-## Adding More Skills
-
-1. Create a new directory under `plugins/reverse-engineering/skills/`
-2. Add a `SKILL.md` file with the skill definition
-3. Update version in `plugin.json` if needed
-
-## License
-
-MIT
+- `../galgame-localization/README.md`

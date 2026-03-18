@@ -1,71 +1,50 @@
-[English](README_EN.md) | 中文
+# reverse-engineering
 
-# 逆向工程技能集 (Reverse Engineering Skills)
+## 作用
 
-为 Claude Code 提供逆向工程分析技能的插件市场。
+这个分类存放“局部逆向分析”的能力型技能。
 
-**专为 [IDA-NO-MCP](https://github.com/P4nda0s/IDA-NO-MCP) 设计** - 从 IDA 导出反编译结果，然后使用 Claude Code 进行分析。
+它们不负责定义整个 title 项目的目录结构，也不负责汉化交付链；它们只解决某一步分析任务。
 
-## 工作流程
+## 来源
 
-1. **从 IDA 导出** - 使用 [IDA-NO-MCP](https://github.com/P4nda0s/IDA-NO-MCP) 插件 (`Ctrl-Shift-E`)
-2. **打开导出目录** - 使用 Claude Code 打开
-3. **使用技能分析** - 分析符号和数据结构
+- 上游仓库：[`P4nda0s/reverse-skills`](https://github.com/P4nda0s/reverse-skills)
+- 当前仓库保留目的：作为本仓库内的 `reverse-engineering` 技能分类入口
+- 当前说明状态：本 README 已改写为适配 `VN_Reverse` 的分类说明，不再保留上游的插件市场展示写法
 
-### 导出目录结构 (由 IDA-NO-MCP 生成)
+## 当前技能
 
-```
-export_dir/
-├── decompile/              # 反编译的 C 代码
-│   ├── 0x401000.c          # 每个函数一个文件，以十六进制地址命名
-│   ├── 0x401234.c
-│   └── ...
-├── decompile_failed.txt    # 反编译失败的函数列表
-├── decompile_skipped.txt   # 跳过的函数列表
-├── strings.txt             # 字符串表 (地址, 长度, 类型, 内容)
-├── imports.txt             # 导入表 (地址:函数名)
-├── exports.txt             # 导出表 (地址:函数名)
-└── memory/                 # 内存十六进制转储 (1MB 分块)
-```
+- `rev-symbol`
+  - 通过导出代码、字符串、导入导出表等信息恢复函数符号。
+- `rev-struct`
+  - 通过函数中的内存访问模式推断结构体布局。
 
+## 适用场景
 
-## 包含的技能
+- 已经有可读的反编译结果，需要继续分析具体函数
+- 想从调用关系、常量、字符串中恢复更可信的语义命名
+- 想从偏移访问、调用链中还原数据结构
 
-| 技能 | 描述 |
-|------|------|
-| `/reverse-engineering:rev-symbol` | 从导出表/导入表或反编译代码分析函数符号 |
-| `/reverse-engineering:rev-struct` | 从反编译函数重建数据结构 |
+## 输入前提
 
-## 安装
+当前这组技能默认围绕 IDA-NO-MCP 导出的目录工作。
 
-### 添加插件市场
+典型输入包括：
 
-```bash
-# 从 GitHub 添加
-/plugin marketplace add P4nda0s/reverse-skills
-```
+- `decompile/`
+- `strings.txt`
+- `imports.txt`
+- `exports.txt`
+- `memory/`
 
-### 安装插件
+## 不负责的事情
 
-```bash
-/plugin install reverse-engineering@reverse-engineering-skills
-```
+这个分类不负责：
 
-## 使用方法
+- 新建一个 title 的整体目录骨架
+- 规定补丁打包、runtime、发布物布局
+- 承担 title 的长期项目状态记录
 
-### 分析符号
+如果目标是整理一个正式汉化项目，应该优先看：
 
-```
-/reverse-engineering:rev-symbol sub_401000
-```
-
-### 重建数据结构
-
-```
-/reverse-engineering:rev-struct sub_401000
-```
-
-
-## 许可证
-
-MIT
+- `../galgame-localization/README.md`
