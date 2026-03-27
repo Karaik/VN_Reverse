@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-from adb_decompile import main
-from nbda.decompile import parse_adb, parse_adb_editable, parse_adb_ir, validate_magic
+from script.adb_decompile_app import main
 
 
 if __name__ == "__main__":
