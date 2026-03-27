@@ -1,4 +1,6 @@
-﻿# ADB 脚本格式（NBDA）
+# ADB 结构
+
+本页只保留 `NBDA` 脚本格式本身，以及脚本资源在资源树中的恢复依据。
 
 ## 文件布局
 
@@ -9,7 +11,7 @@
 - `header[5] = index_count`
 - `header[6] = section1_size`
 
-总长度校验：
+总长度关系：
 
 `0x30 + section0_size + index_count*4 + section1_size + tail_size`
 
@@ -32,117 +34,76 @@
 
 ## 数据区
 
-1. `section0`（长度 `section0_size`）
-2. `index_u32[]`（长度 `index_count`）
-3. `section1`（长度 `section1_size`）
-4. `tail`（文件剩余字节）
+1. `section0`
+2. `index_u32[]`
+3. `section1`
+4. `tail`
 
-## 指令模型
+## 索引与槽位模型
 
-- `index_u32[i]` 指向 `section1` 内槽位偏移。
-- 多个索引可以指向同一偏移（共享槽位）。
-- 槽位按 `u16 opcode` 开头；非文本槽位按 `words` 或 `bytes` 保留。
-- `entries[]` 保存执行序列，`slots[]` 保存去重后的槽位数据。
+- `index_u32[i]` 指向 `section1` 内槽位偏移
+- 多个索引可以指向同一槽位
+- `entries[]` 保存执行序列
+- `slots[]` 保存去重后的槽位数据
 
-## OP 列表
+## 文本模型
 
-| Opcode | Mnemonic |
-|---|---|
-| `0x0001` | `JUMP_RESUME` |
-| `0x0002` | `SCENE_LOAD_OR_REUSE` |
-| `0x0003` | `SCENE_NEXT` |
-| `0x0005` | `SCENE_CALL` |
-| `0x0006` | `SCENE_RETURN` |
-| `0x0007` | `JUMP_ABS` |
-| `0x0008` | `EVAL_EXPR` |
-| `0x0009` | `JUMP_IF` |
-| `0x0010` | `CMD_0010` |
-| `0x0011` | `CMD_0011` |
-| `0x0012` | `WAIT_EVENT` |
-| `0x0013` | `SET_FLAG_0013` |
-| `0x0100` | `MESSAGE_BOX` |
-| `0x0200` | `DIALOGUE_LINE` |
-| `0x0300` | `CMD_0300` |
-| `0x0301` | `CMD_0301` |
-| `0x0303` | `CMD_0303` |
-| `0x0305` | `CMD_0305` |
-| `0x0400` | `CMD_0400` |
-| `0x0402` | `CMD_0402` |
-| `0x0404` | `CMD_0404` |
-| `0x0410` | `CMD_0410` |
-| `0x0412` | `CMD_0412` |
-| `0x0420` | `CMD_0420` |
-| `0x0422` | `CMD_0422` |
-| `0x0500` | `CMD_0500` |
-| `0x0600` | `TEXT_META` |
-| `0x0601` | `TEXT_DIALOGUE` |
-| `0x0602` | `TEXT_BEGIN` |
-| `0x0603` | `TEXT_END` |
-| `0xFFFF` | `END` |
-
-## `0x0601` 文本槽位结构
+### `0x0601` 正文槽位
 
 | 顺序 | 类型 | 字段 | 说明 |
 |---|---|---|---|
 | 1 | `u16` | `opcode` | 固定 `0x0601` |
-| 2 | `u16` | `speaker_u16` | 说话人编号 |
+| 2 | `u16` | `speaker_u16` | 当前保留原字段值，稳定语义尚未完全确认 |
 | 3 | `u16` | `text_len_u16` | UTF-16 code unit 数 |
-| 4 | `u16[text_len]` | `text` | 文本内容 |
+| 4 | `u16[text_len]` | `text` | 正文内容 |
 | 5 | `u16` | `terminator` | 固定 `0x0000` |
 | 6 | `u16[]` | `suffix_words` | 后缀参数 |
 
-## ADBSRC 文本格式
+### `0x0600` 说话人名槽位
 
-ADBSRC 是 IR 的可逆文本表示，扩展名固定 `.adbsrc`。
+| 顺序 | 类型 | 字段 | 说明 |
+|---|---|---|---|
+| 1 | `u16` | `opcode` | 固定 `0x0600` |
+| 2 | `u16` | `kind_u16` | 当前样本稳定为 `0x0000` |
+| 3 | `u16` | `name_len_plus_terminator` | 名字长度加结尾 `0x0000` |
+| 4 | `u16[name_len]` | `speaker_name` | 说话人名字 |
+| 5 | `u16` | `terminator` | 固定 `0x0000` |
 
-头部示例：
+## 编码
 
-```text
-version 1
-format NBDA
-mode ir
-magic_u32 0x4144424E
-version_u32 0x00010000
-header_u32 0x4144424E 0x00010000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000
-section0_hex ...
-tail_hex ...
-[slots]
-...
-[entries]
-...
-```
+- 文本编码：UTF-16LE
+- 可编辑文本长度字段按 UTF-16 code unit 计数
+- `.adv` 名称在回到脚本资源时会规范化为 `.adb`
 
-槽位行：
+## 命名恢复依据
 
-```text
-slot 00010 off=0x000000E4 op=0x0300 mnemonic=CMD_0300 words=[0x0300, 0x0008, 0x0000]
-slot 00022 off=0x000001CA op=0x0601 mnemonic=TEXT_DIALOGUE speaker=0x0001 text="..." suffix=[]
-slot 00100 off=0x00001000 bytes=[0xFF, 0x00, 0x7A]
-```
+脚本资源名字恢复当前主要来自：
 
-执行序列行：
+- 运行时路径中的明文脚本名
+- 系统配置表中的脚本路径
+- 资源树中已恢复表项对脚本名的反向引用
 
-```text
-entry 00022 off=0x000001CA slot=00022 op=0x0601 mnemonic=TEXT_DIALOGUE editable=1
-```
+当前已确认的例子：
 
-说明：
+- `adv\logo.adb`
+- `adv\SNR.adb`
+- `system\save\save.adb`
+- `system\window\menu.adb`
 
-- `text` 必须是 JSON 字符串字面量。
-- 只改 `text` 即可做文本汉化；编译器会自动重算 `text_len_u16` 与偏移。
+## 目录恢复依据
 
-## 工具对应
+- 剧情脚本归属 `adv/`
+- 未恢复原名但已确认是剧情脚本的条目归属 `adv/待补原名/`
+- 系统脚本归属 `system/...`
+- 未恢复原名但已确认是系统脚本的条目归属 `system/scripts/待补原名/`
 
-- `adb_decompile.py`：ADB -> JSON/ADBSRC（默认 JSON）
-- `adb_compile.py`：JSON/ADBSRC -> ADB（默认 JSON）
-- `adb_to_adbsrc.py`：ADB -> ADBSRC 快捷入口
+## 已确认结论
 
-## Mermaid
+- 剧情脚本可以从恢复后的资源树 `adv/` 直接进入脚本链
+- `0x0600` 与 `0x0601` 已经可以在正式模型中建立关联
+- `JSON` 与 `ADBSRC` 都能回编
 
-```mermaid
-flowchart TD
-    A[Header 0x30] --> B[Section0]
-    B --> C[Index Table]
-    C --> D[Section1]
-    D --> E[Tail]
-```
+## 未确认结论
+
+- `speaker_u16` 的稳定语义仍未完全确认
+- 是否还存在非 `0x0600` 的名字来源，仍未完全排除

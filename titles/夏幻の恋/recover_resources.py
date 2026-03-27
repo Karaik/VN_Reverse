@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-from script.adb_compile_app import main
+from archive.recover_resources_app import main
 
 
 if __name__ == "__main__":
