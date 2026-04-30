@@ -105,20 +105,13 @@ feature/docs-<issue-id>
 feature/repo-<issue-id>
 ```
 
-如需补短描述，可以在 issue 号后追加：
-
-```text
-feature/titles-<issue-id>-<short-slug>
-feature/engines-<issue-id>-<short-slug>
-```
-
 示例：
 
 ```text
 feature/titles-128
-feature/titles-128-krkr-build-chain
-feature/engines-145-spm-viewer-docs
-feature/repo-173-doc-split
+feature/titles-128
+feature/engines-145
+feature/repo-173
 ```
 
 约定：
