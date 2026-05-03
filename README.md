@@ -72,6 +72,7 @@ git submodule update --init --recursive
 | `汉化项目` | `KiriKiri` | `真愛の百合は赤く染まる` | [`真愛の百合は赤く染まる`](./titles/真愛の百合は赤く染まる) | [`README.md`](./titles/真愛の百合は赤く染まる/README.md) | |
 | `逆向项目` | `Family Adv System` | `夏幻の恋` | [`夏幻の恋`](./titles/夏幻の恋) | [`README.md`](./titles/夏幻の恋/README.md) | |
 | `逆向项目` | `SAISYS` | `黒の十字架` | [`黒の十字架`](./titles/黒の十字架) | [`README.md`](./titles/黒の十字架/README.md) | |
+| `逆向项目` | `Studio_e-go_V2` | `月神楽` | [`月神楽`](./titles/月神楽) | [`README.md`](./titles/月神楽/README.md) | |
 | `逆向项目` | `Yuka engine` | `２４時君のハートは盗まれる～怪盗ジェイド～` | [`２４時君のハートは盗まれる～怪盗ジェイド～`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～) | [`README.md`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～/README.md) | |
 | `逆向项目` | `NEJII` | `比翼は愛薊の彼方へ 久遠の想` | [`比翼は愛薊の彼方へ 久遠の想`](./titles/比翼は愛薊の彼方へ%20久遠の想) | [`README.md`](./titles/比翼は愛薊の彼方へ%20久遠の想/README.md) | |
 | `逆向项目` | `SHSystem` | `マスカレード` | [`マスカレード`](./titles/マスカレード) | [`README.md`](./titles/マスカレード/README.md) | |
@@ -128,6 +129,7 @@ VN_Reverse/
     |-- 真愛の百合は赤く染まる/
     |-- 夏幻の恋/
     |-- 黒の十字架/
+    |-- 月神楽/
     |-- ２４時君のハートは盗まれる～怪盗ジェイド～/
     |-- 比翼は愛薊の彼方へ 久遠の想/
     |-- マスカレード/
