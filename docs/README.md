@@ -16,7 +16,7 @@
 - `project-types/reverse.md`
   - 逆向项目的目标、目录、交付边界、验证要求。
 - `workflows/git-issue-pr.md`
-  - issue、分支、PR、合并的协作规则。
+  - Git 提交、issue、PR 的轻量协作约定。
 - `workflows/hard-script-pivot.md`
   - 困难脚本遇到高复杂度状态机时，何时停止完整逆向并转向汉化优先方案。
 - `skills-layout.md`
@@ -28,7 +28,7 @@
 
 - 做汉化构建链、补丁打包、runtime、译文输入时，看 `project-types/localization.md`
 - 做格式逆向、反编译、回编、封包回环时，看 `project-types/reverse.md`
-- 要切分支、提 issue、做 PR 时，看 `workflows/git-issue-pr.md`
+- 要整理提交边界、准备 issue / PR 或核对验证说明时，看 `workflows/git-issue-pr.md`
 - 遇到困难脚本、准备从完整逆向切到汉化优先方案时，看 `workflows/hard-script-pivot.md`
 - 准备新增或整理技能时，看 `skills-layout.md`
 - 如果某个目录暂时还无法归类，不要新增第三种项目类型，先记为待判定目录。

@@ -71,7 +71,7 @@
 5. 所有命令示例优先使用相对路径，并以对应项目根目录为基准。
 6. 不要把临时目录、缓存目录、下载目录写成默认依赖路径。
 7. 如果项目已有更具体的本地规则，优先跟随本地规则；如果本地规则与仓库级规则冲突，先停下来做范围确认。
-8. 准备进入主库的非小修任务，默认先有 issue，再开分支，再提 PR；协作流程见 `docs/workflows/git-issue-pr.md`。
+8. 准备进入主库时，按实际需要决定是否起 issue、开分支、提 PR；协作边界见 `docs/workflows/git-issue-pr.md`。
 
 ## 技术文档规则
 
@@ -97,7 +97,7 @@
 - 文档索引：`docs/README.md`
 - 汉化项目规则：`docs/project-types/localization.md`
 - 逆向项目规则：`docs/project-types/reverse.md`
-- 协作流程：`docs/workflows/git-issue-pr.md`
+- 协作约定：`docs/workflows/git-issue-pr.md`
 - 困难脚本转向策略：`docs/workflows/hard-script-pivot.md`
 - skills 目录规范：`docs/skills-layout.md`
 - 技能总览：`skills/README.md`

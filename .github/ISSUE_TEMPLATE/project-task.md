@@ -1,20 +1,12 @@
 ---
 name: Project task
 about: 用于 title、engine、skill、docs、repo 相关任务
-title: "[type/scope] "
+title: ""
 labels: []
 assignees: []
 ---
 
-## 类型
-
-- [ ] title
-- [ ] engine
-- [ ] skill
-- [ ] docs
-- [ ] repo
-
-## 范围
+## 范围（可选）
 
 写清这次任务只涉及哪一个 title、engine、skill 或仓库级主题。
 
@@ -26,7 +18,7 @@ assignees: []
 
 明确本 issue 要解决什么。
 
-## 不做什么
+## 不做什么（可选）
 
 明确排除项，避免 scope 膨胀。
 
@@ -38,12 +30,6 @@ assignees: []
 
 写清如何判断这件事完成。
 
-## 风险与依赖
+## 风险与依赖（可选）
 
 写清依赖的前置条件、已知风险或阻塞点。
-
-## Done 条件
-
-- [ ] 范围明确
-- [ ] 交付物明确
-- [ ] 验证方式明确

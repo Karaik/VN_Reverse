@@ -27,6 +27,7 @@ skills/
 示例：
 
 - `galgame-localization/`
+- `reverse-projects/`
 - `reverse-engineering/`
 
 分类目录下应有一个 `README.md`，说明：
@@ -106,6 +107,7 @@ skills/
 当前仓库建议保持：
 
 - `galgame-localization/`：放 title 级汉化流程型技能
+- `reverse-projects/`：放 title 级逆向流程型技能
 - `reverse-engineering/`：放局部逆向能力型技能
 
 后续如果出现“打包/发布/检查器”这类能跨多个 title 复用的流程，再考虑新增新的技能或扩充现有分类。

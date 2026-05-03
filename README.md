@@ -9,6 +9,13 @@
 3. 沉淀仓库级规则与文档
 4. 保证多仓联动时可复现
 
+> [!WARNING]
+> 本仓库内所有项目当前都不应被视为“已经真实验证可直接使用”。
+> 当前最多只保证：
+> 测试链通过、能反序列化、能加入可变字符串、能改字符编码、能回封、回封后的文本还能再次解封并被反序列化。
+> 这不等于：
+> 已在真实游戏流程中完整验证可用、已验证所有文本修改都不会引发运行时问题、已验证所有资源类型、所有分支、所有边界条件都可安全使用。
+
 ## 初始化
 
 ```bash
@@ -24,7 +31,7 @@ git submodule update --init --recursive
 - 文档索引：[`docs/README.md`](./docs/README.md)
 - 汉化项目规则：[`docs/project-types/localization.md`](./docs/project-types/localization.md)
 - 逆向项目规则：[`docs/project-types/reverse.md`](./docs/project-types/reverse.md)
-- 协作流程：[`docs/workflows/git-issue-pr.md`](./docs/workflows/git-issue-pr.md)
+- 协作约定：[`docs/workflows/git-issue-pr.md`](./docs/workflows/git-issue-pr.md)
 - 困难脚本转向策略：[`docs/workflows/hard-script-pivot.md`](./docs/workflows/hard-script-pivot.md)
 - `skills/` 目录规范：[`docs/skills-layout.md`](./docs/skills-layout.md)
 - 技能总览：[`skills/README.md`](./skills/README.md)
@@ -44,6 +51,7 @@ git submodule update --init --recursive
 给代码代理使用的流程型技能与能力型技能。
 
 - [`skills/galgame-localization`](./skills/galgame-localization)
+- [`skills/reverse-projects`](./skills/reverse-projects)
 - [`skills/reverse-engineering`](./skills/reverse-engineering)
 
 ### titles
@@ -63,6 +71,7 @@ git submodule update --init --recursive
 | `汉化项目` | `SystemNNN` | `虫爱少女 FD 汉化项目` | [`mushiai_fd_chineseization`](./titles/mushiai_fd_chineseization) | [`README.md`](./titles/mushiai_fd_chineseization/README.md) | |
 | `汉化项目` | `KiriKiri` | `真愛の百合は赤く染まる` | [`真愛の百合は赤く染まる`](./titles/真愛の百合は赤く染まる) | [`README.md`](./titles/真愛の百合は赤く染まる/README.md) | |
 | `逆向项目` | `Family Adv System` | `夏幻の恋` | [`夏幻の恋`](./titles/夏幻の恋) | [`README.md`](./titles/夏幻の恋/README.md) | |
+| `逆向项目` | `SAISYS` | `黒の十字架` | [`黒の十字架`](./titles/黒の十字架) | [`README.md`](./titles/黒の十字架/README.md) | |
 | `逆向项目` | `Yuka engine` | `２４時君のハートは盗まれる～怪盗ジェイド～` | [`２４時君のハートは盗まれる～怪盗ジェイド～`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～) | [`README.md`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～/README.md) | |
 | `逆向项目` | `NEJII` | `比翼は愛薊の彼方へ 久遠の想` | [`比翼は愛薊の彼方へ 久遠の想`](./titles/比翼は愛薊の彼方へ%20久遠の想) | [`README.md`](./titles/比翼は愛薊の彼方へ%20久遠の想/README.md) | |
 | `逆向项目` | `SHSystem` | `マスカレード` | [`マスカレード`](./titles/マスカレード) | [`README.md`](./titles/マスカレード/README.md) | |
@@ -75,7 +84,7 @@ git submodule update --init --recursive
 
 1. 先读 [`AGENT.md`](./AGENT.md)
 2. 再看 [`docs/README.md`](./docs/README.md)
-3. 如果任务要进入主库，先看 [`docs/workflows/git-issue-pr.md`](./docs/workflows/git-issue-pr.md)
+3. 如果任务要整理提交边界、准备 issue / PR 或核对验证说明，再看 [`docs/workflows/git-issue-pr.md`](./docs/workflows/git-issue-pr.md)
 4. 然后按项目类型进入对应规则
 
 ### 做 title
@@ -111,12 +120,14 @@ VN_Reverse/
 |-- skills/
 |   |-- README.md
 |   |-- galgame-localization/
+|   |-- reverse-projects/
 |   `-- reverse-engineering/
 `-- titles/
     |-- mushiai_chineseization/
     |-- mushiai_fd_chineseization/
     |-- 真愛の百合は赤く染まる/
     |-- 夏幻の恋/
+    |-- 黒の十字架/
     |-- ２４時君のハートは盗まれる～怪盗ジェイド～/
     |-- 比翼は愛薊の彼方へ 久遠の想/
     |-- マスカレード/

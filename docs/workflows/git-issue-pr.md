@@ -1,195 +1,53 @@
-# Git / Issue / PR 协作规则
+# Git / Issue / PR 协作约定
 
 ## 目的
 
-这个仓库后续采用：
+这个文档只保留最小协作边界，不再把 issue、分支、PR 的使用方式写成强制工作流。
 
-- 先列 issue
-- 再开分支
-- 完成后提 PR
-- 评审后合并到主分支
+仓库不再要求：
 
-规则的核心不是形式化，而是避免一个分支里同时混入多个 title、多种目标和不同层级的变更。
+- 必须先起 issue 再做事
+- 必须一个 issue 对应一个分支
+- 必须一个 PR 只解决一个 issue
+- 必须使用固定分支命名格式
+- 必须把所有非小修改动都包装成同一种提交流程
 
-## 基本原则
+## 最小要求
 
-1. 一个 issue 对应一个明确目标。
-2. 一个分支只服务一个 issue。
-3. 一个 PR 只解决一个 issue，不顺手夹带别的 title 或别的主题。
-4. 非小修任务默认不直接向主分支提交。
-5. 如果一项工作横跨多个 title 或多个主题，先拆 issue，再拆分支。
+1. 正式提交的范围要清楚，不要把无关 title、无关主题和生成产物混进同一次提交。
+2. 进入主库的改动，要能说清改了什么、没改什么、怎么验证。
+3. 如果开 issue 或提 PR，正文应写清目标、范围、验证方式和已知边界。
+4. 文档、实现、验证如果一起改，最终叙事必须一致，不能各说各话。
+5. 缓存、临时目录、本地实验文件、构建产物不进入正式提交。
 
-## issue 起票规则
+## issue 使用建议
 
-### 什么时候必须起 issue
+- 需要长期跟踪、跨人协作、记录验收标准或保留决策背景时，再开 issue。
+- 小范围本地整理、直接可验证的小修，不要求先起 issue。
+- issue 是协作工具，不再是仓库强制前置条件。
 
-满足任一条件时，先起 issue：
+## 分支使用建议
 
-- 会进入主库
-- 会新增或重构正式执行链
-- 会改目录结构、README、AGENT、skills、docs、runtime、build 流程
-- 会影响某个 title 的默认用法、验证标准、交付边界
+- 可以直接在当前分支整理，也可以单开分支，由任务规模和协作需要决定。
+- 分支名只要求可读、可识别，不再要求固定模板或固定 issue 号格式。
+- 如果一个分支已经混入多类无关改动，先拆干净再提交。
 
-可以不单独起 issue 的情况：
+## PR 使用建议
 
-- 纯错字修正
-- 纯链接修正
-- 不影响行为的极小文案修正
+- 需要评审、需要保留变更上下文、或不适合直接合并时，再开 PR。
+- PR 标题和正文以说明事实为主，不要求固定格式。
+- 如果没有关联 issue，可以留空；不要为了满足模板硬造 issue。
 
-### issue 粒度
+## 提交前检查
 
-一个 issue 应只覆盖一种主题：
-
-- 一个 title 的一个明确目标
-- 一个 engine 工程的一个明确目标
-- 一个 skill 分类或一个具体 skill 的一次整理
-- 一次仓库级规则或协作流程调整
-
-如果同时涉及两个以上独立目标，应拆分。
-
-### issue 标题格式
-
-统一格式：
-
-```text
-[type/scope] summary
-```
-
-`type` 取值建议：
-
-- `title`
-- `engine`
-- `skill`
-- `docs`
-- `repo`
-
-`scope` 写最小可识别范围。
-
-示例：
-
-```text
-[title/真愛の百合は赤く染まる] 固化 patch.xp3 的正式构建输入
-[title/夏幻の恋] 补齐 ADBSRC 文本变长回归
-[engine/NeXAS_SPM_VIEWER] 补 JavaFX 打包与测试说明
-[skill/galgame-localization] 整理流程型 skill 的目录说明
-[docs/repo] 拆分仓库级 AGENT 与项目类型规则
-```
-
-### issue 正文必须写清
-
-- 背景
-- 当前状态
-- 目标
-- 明确不做什么
-- 预期交付物
-- 验证方式
-- 风险或依赖
-
-## 分支规则
-
-### 一般规则
-
-- 一个 issue 开一个分支。
-- 一个分支只处理一个项目或一个明确子任务。
-- 分支名必须能看出 issue 编号和大致范围。
-
-### 分支命名
-
-默认按变更范围命名：
-
-```text
-feature/titles-<issue-id>
-feature/engines-<issue-id>
-feature/skills-<issue-id>
-feature/docs-<issue-id>
-feature/repo-<issue-id>
-```
-
-如需补短描述，可以在 issue 号后追加：
-
-```text
-feature/titles-<issue-id>-<short-slug>
-feature/engines-<issue-id>-<short-slug>
-```
-
-示例：
-
-```text
-feature/titles-128
-feature/titles-128-krkr-build-chain
-feature/engines-145-spm-viewer-docs
-feature/repo-173-doc-split
-```
-
-约定：
-
-- `titles`、`engines`、`skills`、`docs`、`repo` 对应本次变更的主范围
-- `<issue-id>` 必须紧跟在范围后面
-- `<short-slug>` 可选，用简短英文或拼音，避免太长
-- 不把多个 title 名塞进同一个 slug
-
-如果需要区分自动化创建分支，请在 issue 或 PR 说明中标注，不在分支名中引入额外前缀。
-
-## PR 规则
-
-### PR 标题
-
-建议格式：
-
-```text
-[type/scope] summary
-```
-
-通常与 issue 标题保持同主题，不强求完全一致。
-
-### PR 正文必须写清
-
-- 关联 issue
-- 这次改了什么
-- 没改什么
-- 怎么验证
-- 已知风险
-
-### PR 边界
-
-PR 里不应混入：
-
-- 另一个 title 的顺手修改
-- 无关的 README 清理
-- 生成产物
-- 临时缓存和本地实验文件
-
-## 合并规则
-
-- 默认通过 PR 合并到主分支。
-- 主分支只保留经过 issue 和 PR 流程的正式结果。
-- 如果发现一个 PR 实际上混了多件事，先拆再合。
-
-## issue 拆分建议
-
-下面这些情况应拆 issue：
-
-- 同时改脚本链和 runtime
-- 同时改两个 title
-- 同时做文档分层和功能实现
-- 同时做仓库规则调整和 title 内部修复
-
-## 推荐标签
-
-如果后续要配 labels，建议至少有：
-
-- `type:title`
-- `type:engine`
-- `type:skill`
-- `type:docs`
-- `type:repo`
-- `status:blocked`
-- `status:in-progress`
-- `status:review`
+- 改动范围是否仍然清楚、可解释
+- 是否混入生成产物、缓存、临时文件
+- 验证是否真实执行，结果是否可复现
+- 文档里写的入口、默认行为、验证方式是否和实现一致
 
 ## 模板
 
-仓库已提供：
-
 - `.github/ISSUE_TEMPLATE/project-task.md`
 - `.github/pull_request_template.md`
+
+它们是辅助模板，不再是强制流程。
