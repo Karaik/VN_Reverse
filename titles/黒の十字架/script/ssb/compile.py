@@ -134,3 +134,160 @@ def apply_text_entries_file(project_path: Path, text_entries_path: Path) -> None
             if key in patches:
                 entry["text"] = str(patches[key])
     project_path.write_text(json.dumps(project, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def apply_ac07_character_selection_file(project_path: Path, selection_path: Path) -> None:
+    project = load_project(project_path)
+    selection_doc = json.loads(selection_path.read_text(encoding="utf-8"))
+    patches = {
+        (int(choice["text_word_offset"]), int(choice["text_byte_offset"])): str(choice["text"])
+        for cluster in selection_doc["entries"]
+        for choice in cluster["choices"]
+    }
+    updated = 0
+    for entry in project["strings"]:
+        key = (
+            int(entry["word_offset"]) if entry["word_offset"] is not None else -1,
+            int(entry["byte_offset"]),
+        )
+        if key in patches:
+            entry["text"] = patches[key]
+            updated += 1
+    if updated == 0:
+        raise ValueError("No matching AC07 character selection entries were applied")
+    if "ac07_ui_records" in project:
+        for entry in project["ac07_ui_records"]:
+            key = (int(entry["text_word_offset"]), int(entry["text_byte_offset"]))
+            if key in patches:
+                entry["text"] = patches[key]
+    if "strings" in project:
+        for entry in project["strings"]:
+            key = (
+                int(entry["word_offset"]) if entry["word_offset"] is not None else -1,
+                int(entry["byte_offset"]),
+            )
+            if key in patches:
+                entry["text"] = patches[key]
+    if "ac07_visible_clusters" in project:
+        for cluster in project["ac07_visible_clusters"]:
+            for choice in cluster["choices"]:
+                key = (int(choice["text_word_offset"]), int(choice["text_byte_offset"]))
+                if key in patches:
+                    choice["text"] = patches[key]
+    if "ac07_character_selection_records" in project:
+        for cluster in project["ac07_character_selection_records"]:
+            for choice in cluster["choices"]:
+                key = (int(choice["text_word_offset"]), int(choice["text_byte_offset"]))
+                if key in patches:
+                    choice["text"] = patches[key]
+    if "name_related_records" in project:
+        for entry in project["name_related_records"]:
+            key = (int(entry["text_word_offset"]), int(entry["text_byte_offset"]))
+            if key in patches:
+                entry["text"] = patches[key]
+    project_path.write_text(json.dumps(project, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def apply_ac07_visible_clusters_file(project_path: Path, cluster_path: Path) -> None:
+    project = load_project(project_path)
+    cluster_doc = json.loads(cluster_path.read_text(encoding="utf-8"))
+    patches = {
+        (int(choice["text_word_offset"]), int(choice["text_byte_offset"])): str(choice["text"])
+        for cluster in cluster_doc["entries"]
+        for choice in cluster["choices"]
+        if choice.get("text")
+    }
+    updated = 0
+    for entry in project["strings"]:
+        key = (
+            int(entry["word_offset"]) if entry["word_offset"] is not None else -1,
+            int(entry["byte_offset"]),
+        )
+        if key in patches:
+            entry["text"] = patches[key]
+            updated += 1
+    if updated == 0:
+        raise ValueError("No matching AC07 visible cluster entries were applied")
+    if "ac07_ui_records" in project:
+        for entry in project["ac07_ui_records"]:
+            key = (int(entry["text_word_offset"]), int(entry["text_byte_offset"]))
+            if key in patches:
+                entry["text"] = patches[key]
+    if "ac07_visible_clusters" in project:
+        for cluster in project["ac07_visible_clusters"]:
+            for choice in cluster["choices"]:
+                key = (int(choice["text_word_offset"]), int(choice["text_byte_offset"]))
+                if key in patches:
+                    choice["text"] = patches[key]
+    if "ac07_character_selection_records" in project:
+        for cluster in project["ac07_character_selection_records"]:
+            for choice in cluster["choices"]:
+                key = (int(choice["text_word_offset"]), int(choice["text_byte_offset"]))
+                if key in patches:
+                    choice["text"] = patches[key]
+    if "ac07_option_clusters" in project:
+        for cluster in project["ac07_option_clusters"]:
+            for choice in cluster["choices"]:
+                key = (int(choice["text_word_offset"]), int(choice["text_byte_offset"]))
+                if key in patches:
+                    choice["text"] = patches[key]
+    if "name_related_records" in project:
+        for entry in project["name_related_records"]:
+            key = (int(entry["text_word_offset"]), int(entry["text_byte_offset"]))
+            if key in patches:
+                entry["text"] = patches[key]
+    project_path.write_text(json.dumps(project, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def apply_name_related_records_file(project_path: Path, records_path: Path) -> None:
+    project = load_project(project_path)
+    records_doc = json.loads(records_path.read_text(encoding="utf-8"))
+    patches = {
+        (int(entry["text_word_offset"]), int(entry["text_byte_offset"])): str(entry["text"])
+        for entry in records_doc["entries"]
+    }
+    updated = 0
+    for entry in project["strings"]:
+        key = (
+            int(entry["word_offset"]) if entry["word_offset"] is not None else -1,
+            int(entry["byte_offset"]),
+        )
+        if key in patches:
+            entry["text"] = patches[key]
+            updated += 1
+    if updated == 0:
+        raise ValueError("No matching name-related entries were applied")
+    if "main_display_records" in project:
+        for record in project["main_display_records"]:
+            key = (int(record["display_name_word_offset"]) if record["display_name_word_offset"] is not None else -1, int(record["display_name_byte_offset"] or -1))
+            if key in patches:
+                record["display_name_text"] = patches[key]
+    if "ac07_ui_records" in project:
+        for entry in project["ac07_ui_records"]:
+            key = (int(entry["text_word_offset"]), int(entry["text_byte_offset"]))
+            if key in patches:
+                entry["text"] = patches[key]
+    if "ac07_visible_clusters" in project:
+        for cluster in project["ac07_visible_clusters"]:
+            for choice in cluster["choices"]:
+                key = (int(choice["text_word_offset"]), int(choice["text_byte_offset"]))
+                if key in patches:
+                    choice["text"] = patches[key]
+    if "ac07_character_selection_records" in project:
+        for cluster in project["ac07_character_selection_records"]:
+            for choice in cluster["choices"]:
+                key = (int(choice["text_word_offset"]), int(choice["text_byte_offset"]))
+                if key in patches:
+                    choice["text"] = patches[key]
+    if "ac07_option_clusters" in project:
+        for cluster in project["ac07_option_clusters"]:
+            for choice in cluster["choices"]:
+                key = (int(choice["text_word_offset"]), int(choice["text_byte_offset"]))
+                if key in patches:
+                    choice["text"] = patches[key]
+    if "name_related_records" in project:
+        for entry in project["name_related_records"]:
+            key = (int(entry["text_word_offset"]), int(entry["text_byte_offset"]))
+            if key in patches:
+                entry["text"] = patches[key]
+    project_path.write_text(json.dumps(project, ensure_ascii=False, indent=2), encoding="utf-8")

@@ -1,15 +1,16 @@
 # SSB 用法
 
-当前正式脚本入口：
+## 正式入口
 
 - `ssb_decompile.py`
 - `ssb_compile.py`
+- `regression_test.py`
 
 以下命令均以当前 title 根目录为基准执行。
 
 ## `ssb_decompile.py`
 
-### 默认 `cp932` 反编译
+### 单目录反编译
 
 ```powershell
 python .\ssb_decompile.py .\game\SCRIPT .\dump_ssb --text-encoding cp932
@@ -22,28 +23,34 @@ python .\ssb_decompile.py .\game\SCRIPT .\dump_ssb --text-encoding cp932
   - `script.ssbsrc`
   - `text_entries.json`
   - `translation_entries.json`
+  - `main_display_records.json`
+  - `ac07_ui_records.json`
+  - `ac07_visible_clusters.json`
+  - `ac07_character_selection_records.json`
+  - `ac07_option_clusters.json`
+  - `name_related_records.json`
 - 适用场景：
   - 导出正式中间表示
-  - 审查词流
-  - 进入正式文本修改链
+  - 进入正文/显示名修改链
+  - 进入统一名字相关修改链
+  - 检查 `AC07` 角色选择簇与选项簇
 
-### 目标编码回写后的再次反编译
+### 批量反编译
 
 ```powershell
-python .\ssb_decompile.py .\rebuild_ssb_gbk .\rebuild_dump_gbk --text-encoding gbk
+python .\ssb_decompile.py .\game .\dump_batch --batch --text-encoding cp932
 ```
 
 - 输入：
-  - `rebuild_ssb_gbk\CODE.SSB`
-  - `rebuild_ssb_gbk\DATA.SSB`
+  - `game/` 根目录
 - 输出：
-  - `rebuild_dump_gbk\` 下的四类正式导出
+  - `dump_batch/` 下按原目录镜像输出
 - 适用场景：
-  - 校验目标编码写回结果仍可再次反编译
+  - 一次性导出整批脚本目录
 
 ## `ssb_compile.py`
 
-### 默认 `cp932` 编译
+### 回写正文/显示名
 
 ```powershell
 python .\ssb_compile.py .\dump_ssb\script.json .\rebuild_ssb --text-entries .\dump_ssb\translation_entries.json --text-encoding cp932
@@ -56,9 +63,68 @@ python .\ssb_compile.py .\dump_ssb\script.json .\rebuild_ssb --text-entries .\du
   - `CODE.SSB`
   - `DATA.SSB`
 - 适用场景：
-  - 按源编码路径回写脚本文本
+  - 回写 `AA13` 正文与显示名
 
-### 指定回写编码（GBK 示例）
+### 回写统一名字相关记录
+
+```powershell
+python .\ssb_compile.py .\dump_ssb\script.json .\rebuild_ssb --name-related-records .\dump_ssb\name_related_records.json --text-encoding cp932
+```
+
+- 输入：
+  - `script.json`
+  - `name_related_records.json`
+- 输出：
+  - `CODE.SSB`
+  - `DATA.SSB`
+- 适用场景：
+  - 统一回写 `AA13` 显示名、`AC07` 角色选择名字、`AC07` 选项文本
+
+### 回写 `AC07` 角色选择簇
+
+```powershell
+python .\ssb_compile.py .\dump_ssb\script.json .\rebuild_ssb --ac07-character-selection .\dump_ssb\ac07_character_selection_records.json --text-encoding cp932
+```
+
+- 输入：
+  - `script.json`
+  - `ac07_character_selection_records.json`
+- 输出：
+  - `CODE.SSB`
+  - `DATA.SSB`
+- 适用场景：
+  - 单独回写 `AC07` 角色选择名字
+
+### 回写 `AC07` 选项簇
+
+```powershell
+python .\ssb_compile.py .\dump_ssb\script.json .\rebuild_ssb --ac07-visible-clusters .\dump_ssb\ac07_option_clusters.json --text-encoding cp932
+```
+
+- 输入：
+  - `script.json`
+  - `ac07_option_clusters.json`
+- 输出：
+  - `CODE.SSB`
+  - `DATA.SSB`
+- 适用场景：
+  - 单独回写 `AC07` 选项文本
+
+### 批量回编
+
+```powershell
+python .\ssb_compile.py .\dump_batch .\rebuild_batch --batch --use-default-text-entries --text-encoding cp932
+```
+
+- 输入：
+  - `dump_batch/`
+  - 每个 `script.json` 同级的 `translation_entries.json`
+- 输出：
+  - `rebuild_batch/` 下按原目录镜像输出
+- 适用场景：
+  - 批量回编整批脚本目录
+
+### 指定目标编码回写
 
 ```powershell
 python .\ssb_compile.py .\dump_ssb\script.json .\rebuild_ssb_gbk --text-entries .\dump_ssb\translation_entries.json --text-encoding gbk
@@ -71,14 +137,28 @@ python .\ssb_compile.py .\dump_ssb\script.json .\rebuild_ssb_gbk --text-entries 
   - `CODE.SSB`
   - `DATA.SSB`
 - 适用场景：
-  - 把文本按目标编码写回
+  - 按指定目标编码回写正文
 
-## 文本表修改建议
+## 正式文本入口
 
-- 默认修改入口是 `translation_entries.json`。
-- 当前正式筛选条件优先看结构字段：
-  - `category`
-  - `storage_bytes`
-  - `main_display_reference_count`
-  - `text_reference_count`
-- 不建议再依赖旧的 `dialogue / choice / choice_or_label` 口径做脚本批处理，因为当前 title 还没有把这几类语义完整建模稳定。
+### `translation_entries.json`
+
+当前正式 `usage`：
+
+- `main_display_text`
+- `main_display_name`
+
+### `name_related_records.json`
+
+当前正式 `record_kind`：
+
+- `aa13_display_name`
+- `ac07_character_selection_name`
+- `ac07_option_text`
+
+## 当前边界
+
+- `translation_entries.json` 当前只承载 `AA13` 正文与显示名
+- `name_related_records.json` 当前承载统一的人名相关入口
+- `ac07_character_selection_records.json` 与 `ac07_option_clusters.json` 当前用于单独检查或单独回写
+- 前置视觉链保留在 `main_display_records.json` 中，但当前不作为正式翻译入口
