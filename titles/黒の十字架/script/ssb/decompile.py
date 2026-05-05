@@ -83,6 +83,8 @@ def scan_strings(
                 "reference_count": reference_counts.get(word_offset, 0) if word_offset is not None else 0,
                 "text_reference_count": len(text_reference_pcs),
                 "text_reference_pcs": text_reference_pcs[:8],
+                "main_display_reference_count": 0,
+                "main_display_reference_pcs": [],
             }
         )
     return strings
@@ -122,6 +124,35 @@ def build_text_reference_map(code_words: list[int], data_size: int) -> dict[int,
     return refs
 
 
+def is_main_display_reference(code_words: list[int], pc: int) -> bool:
+    if pc < 8 or pc + 8 >= len(code_words):
+        return False
+    return (
+        to_signed_u32(code_words[pc - 8]) == -2147483632
+        and to_signed_u32(code_words[pc - 5]) == -2147483647
+        and code_words[pc + 2] == 0x12
+        and code_words[pc + 4] == 0x0000AA13
+        and to_signed_u32(code_words[pc + 5]) == -2147483636
+        and code_words[pc + 6] == 1
+        and code_words[pc + 7] == 0x000415A5
+        and to_signed_u32(code_words[pc + 8]) in {-2147483647, -2147483641}
+    )
+
+
+def build_main_display_reference_map(code_words: list[int], data_size: int) -> dict[int, list[int]]:
+    refs: dict[int, list[int]] = {}
+    for index, word in enumerate(code_words):
+        if word >= 0x80000000:
+            continue
+        byte_offset = word * 4
+        if byte_offset >= data_size:
+            continue
+        if not is_main_display_reference(code_words, index):
+            continue
+        refs.setdefault(word, []).append(index)
+    return refs
+
+
 def build_text_entries(strings: list[dict[str, object]]) -> list[dict[str, object]]:
     entries: list[dict[str, object]] = []
     for entry in strings:
@@ -145,20 +176,10 @@ def build_text_entries(strings: list[dict[str, object]]) -> list[dict[str, objec
 def build_translation_entries(strings: list[dict[str, object]]) -> list[dict[str, object]]:
     entries: list[dict[str, object]] = []
     for entry in strings:
-        if entry["text_reference_count"] <= 0:
+        if int(entry["reference_count"]) <= 0:
             continue
         if entry["category"] == "ascii_resource":
             continue
-        text = str(entry["text"])
-        usage = "dialogue"
-        if text in {"はい", "いいえ", "やめる", "帰る", "わかった", "止める", "止めない"}:
-            usage = "choice"
-        elif text.startswith("→") or text.endswith("へ") or text.endswith("エンド") or text == "NO DATA":
-            usage = "system_or_label"
-        elif any(mark in text for mark in {"。", "、", "！", "？", "…", "・", "♪", "　", "「", "」", "～"}):
-            usage = "dialogue"
-        elif len(text) <= 16 and "　" not in text and "。" not in text and "、" not in text and "「" not in text:
-            usage = "choice_or_label"
         entries.append(
             {
                 "word_offset": entry["word_offset"],
@@ -166,9 +187,12 @@ def build_translation_entries(strings: list[dict[str, object]]) -> list[dict[str
                 "storage_bytes": entry["storage_bytes"],
                 "text": entry["text"],
                 "category": entry["category"],
-                "usage": usage,
+                "usage": "text",
+                "reference_count": entry["reference_count"],
                 "text_reference_count": entry["text_reference_count"],
                 "text_reference_pcs": entry["text_reference_pcs"],
+                "main_display_reference_count": entry["main_display_reference_count"],
+                "main_display_reference_pcs": entry["main_display_reference_pcs"],
             }
         )
     return sorted(entries, key=lambda item: (item["byte_offset"], item["word_offset"]))
@@ -184,19 +208,16 @@ def refine_translation_entry_usages(code_words: list[int], entries: list[dict[st
             next3 = to_signed_u32(code_words[pc + 3])
             next4 = to_signed_u32(code_words[pc + 4])
             if next1 == 0x50777 and next2 < 0x80000000 and next3 == -2147418112 and next4 == -2147483647:
-                text = str(entry["text"])
-                if any(mark in text for mark in {"。", "、", "！", "？", "…", "・", "♪", "　", "「", "」", "～"}):
-                    entry["usage"] = "table_entry_dialogue"
-                else:
-                    entry["usage"] = "table_entry_label"
+                entry["usage"] = "table_entry"
                 break
-            if entry["usage"] == "dialogue":
-                if next3 == -2147418111 and next4 == -2147418112:
-                    entry["usage"] = "table_entry_dialogue"
-                    break
-                if next1 == 473810 and next3 == -2147418112 and next4 == -2147483647:
-                    entry["usage"] = "table_entry_dialogue"
-                    break
+            if next3 == -2147418111 and next4 == -2147418112:
+                entry["usage"] = "main_display_text"
+                break
+            if next1 == 473810 and next3 == -2147418112 and next4 == -2147483647:
+                entry["usage"] = "main_display_text"
+                break
+        if entry["usage"] == "text" and int(entry.get("main_display_reference_count", 0)) > 0:
+            entry["usage"] = "main_display_text"
     return entries
 
 
@@ -207,7 +228,21 @@ def build_project(script_dir: Path, text_encoding: str = DEFAULT_TEXT_ENCODING) 
     code_words = load_code_words(code_bytes)
     reference_counts = build_reference_counts(code_words, len(decoded_data))
     text_reference_map = build_text_reference_map(code_words, len(decoded_data))
+    main_display_reference_map = build_main_display_reference_map(code_words, len(decoded_data))
     strings = scan_strings(decoded_data, reference_counts, text_reference_map, text_encoding)
+    for entry in strings:
+        word_offset = entry["word_offset"]
+        if word_offset is None:
+            continue
+        main_display_pcs = main_display_reference_map.get(word_offset, [])
+        entry["main_display_reference_count"] = len(main_display_pcs)
+        entry["main_display_reference_pcs"] = main_display_pcs[:8]
+        if entry["text_reference_count"] > 0:
+            continue
+        if not main_display_pcs:
+            continue
+        entry["text_reference_count"] = len(main_display_pcs)
+        entry["text_reference_pcs"] = main_display_pcs[:8]
     text_entries = build_text_entries(strings)
     translation_entries = build_translation_entries(strings)
     translation_entries = refine_translation_entry_usages(code_words, translation_entries)
