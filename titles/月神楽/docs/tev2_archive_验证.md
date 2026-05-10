@@ -1,19 +1,15 @@
 # TE_V2 资源包验证
 
-当前资源包正式验证入口：
+本文只写最终态验证。
 
-```powershell
-python .\regression_test.py
-```
+## 当前正式覆盖
 
-当前已覆盖：
+- `gameXX.dat -> files\` 解包
+- `manifest.json` 输出
+- 解包后资源树可作为脚本链输入
 
-- 资源包探针清单生成
-- `gameXX.dat` 样本存在性和数量检查
-- 单个 `PAK0` 正式解出
-- 解出结果按 `group_name/file_name` 落位
+## 当前本地结果
 
-当前未覆盖：
-
-- 正式 unpack -> pack 回环
-- 字节级一致性验证
+- `game00.dat` 解包可作为脚本正式入口
+- `game01.dat` 解包可作为脚本正式入口
+- `game02.dat ~ game04.dat` 解包可完成，但当前未发现正式脚本载体

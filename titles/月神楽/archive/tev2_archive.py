@@ -75,7 +75,10 @@ def write_probe_manifest(game_dir: Path, output_dir: Path) -> Path:
     output_dir.mkdir(parents=True, exist_ok=True)
     manifest = build_probe_manifest(game_dir)
     path = output_dir / "archive_probe.json"
-    path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temp_path = path.with_suffix(path.suffix + ".tmp")
+    temp_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    temp_path.replace(path)
     return path
 
 

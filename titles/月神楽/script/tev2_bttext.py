@@ -9,6 +9,13 @@ from pathlib import Path
 from script.container import TXT0_XOR_PATTERN, decode_mode5_swapped, encode_mode5_swapped, extract_ascii_literals
 
 
+def _write_json_atomic(path: Path, payload: dict[str, object]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temp_path = path.with_suffix(path.suffix + ".tmp")
+    temp_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    temp_path.replace(path)
+
+
 @dataclass
 class BtTextOuterDoc:
     format: str
@@ -264,6 +271,23 @@ def compile_bttext(doc: dict[str, object], text_encoding: str = "cp932") -> byte
     return rebuilt
 
 
+def build_bttext_from_decoded_root(raw_header: dict[str, object], decoded_root_bytes: bytes) -> bytes:
+    encoded_root_main_size = len(decoded_root_bytes) - (len(decoded_root_bytes) & 3)
+    encoded_root = (
+        encode_mode5_swapped(decoded_root_bytes[:encoded_root_main_size], int(raw_header["key_seed_u32"]))
+        + decoded_root_bytes[encoded_root_main_size:]
+    )
+    total_size_u32 = 16 + len(encoded_root)
+    rebuilt = (
+        b"TSCR"
+        + total_size_u32.to_bytes(4, "little")
+        + int(raw_header["raw_entry_count_u32"]).to_bytes(4, "little")
+        + int(raw_header["key_seed_u32"]).to_bytes(4, "little")
+        + encoded_root
+    )
+    return rebuilt
+
+
 def write_text_doc(path: Path, doc: BtTextTextDoc) -> None:
     payload = {
         "format": doc.format,
@@ -274,22 +298,11 @@ def write_text_doc(path: Path, doc: BtTextTextDoc) -> None:
         "txt0_header": doc.txt0_header,
         "entries": doc.entries,
     }
-    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    _write_json_atomic(path, payload)
 
 
 def rebuild_bttext(doc: BtTextOuterDoc) -> bytes:
-    encoded_root_main_size = len(doc.decoded_root_bytes) - (len(doc.decoded_root_bytes) & 3)
-    encoded_root = (
-        encode_mode5_swapped(doc.decoded_root_bytes[:encoded_root_main_size], int(doc.raw_header["key_seed_u32"]))
-        + doc.decoded_root_bytes[encoded_root_main_size:]
-    )
-    rebuilt = (
-        b"TSCR"
-        + int(doc.raw_header["total_size_u32"]).to_bytes(4, "little")
-        + int(doc.raw_header["raw_entry_count_u32"]).to_bytes(4, "little")
-        + int(doc.raw_header["key_seed_u32"]).to_bytes(4, "little")
-        + encoded_root
-    )
+    rebuilt = build_bttext_from_decoded_root(doc.raw_header, doc.decoded_root_bytes)
     if len(rebuilt) != int(doc.raw_header["total_size_u32"]):
         raise ValueError("Rebuilt BtText size does not match raw header")
     return rebuilt
@@ -310,6 +323,5 @@ def write_probe(path: Path, output_path: Path) -> Path:
         "known_container_magics": doc.known_container_magics,
         "container_summary": doc.container_summary,
     }
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    _write_json_atomic(output_path, payload)
     return output_path

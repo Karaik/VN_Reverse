@@ -1,157 +1,149 @@
 # 月神楽（Studio_e-go_V2）
 
-当前 title 按逆向项目处理，当前正式目标是：
+这个 title 当前已经收束到一条正式汉化主路径：
 
-- 导出可编辑文本
-- 支持文本回写
-- 支持长文本扩容与短文本缩短
-- 用正式验证确认这些链路可重复通过
+1. 从资源包恢复资源树
+2. 从资源树批量导出脚本文本
+3. 修改 JSON 文本
+4. 批量回编回 `.scr/.dat`
+5. 按需回填到你的资源树或后续封包链
 
-当前正式文本模型只包含**结构化反序列化确认过的可汉化文本**。  
-不再把正则扫到的伪候选当成正式文本。
+当前脚本正式覆盖范围是 `game00.dat` 与 `game01.dat` 中的 `script/*.scr`。
+本地结构校验结果是：这两处脚本里的非 ASCII 文本槽位零漏提，默认总验证可在 1 分钟内完成。
 
-## 当前能做什么
+**文本汉化最短路径**
 
-- `tiNameSp.dat` / `tiBalloonSp.dat` 这类固定表可反编译、回编、`gbk` 写回
-- `BtText.dat` 可反编译、回编、可变长回写、`gbk` 写回
-- `*.scr` 可结构化导出文本候选、回写、扩容、缩短
-
-## 文本最短路径
-
-如果你只是要做汉化文本处理，最短路径是：
-
-1. 解出资源
-2. 导出文本
-3. 修改 JSON
-4. 回编
-5. 跑验证
-
-## 正式入口
-
-### 1. 解出资源
+先解出目标资源包：
 
 ```powershell
 python .\tev2_unpack.py .\game\game00.dat .\pak0_game00
 ```
 
+目标：
+把原始资源包恢复成可直接浏览的资源树。
 输入：
-- `.\game\game00.dat`
-
+`game00.dat` 或 `game01.dat`。
 输出：
-- `.\pak0_game00\manifest.json`
-- `.\pak0_game00\files\`
+`.\pak0_game00\files\`。
+下一步：
+把这棵资源树作为脚本导出输入。
 
-意义：
-- 提供正式文本链所需的 `data/` 和 `script/` 资源树
-
-### 2. 导出固定表文本
+批量导出文本：
 
 ```powershell
-python .\tev2_decompile.py .\pak0_game00\files\data\tiNameSp.dat .\table_dump\tiNameSp.json --text-encoding cp932
+python .\tev2_decompile.py .\pak0_game00\files .\text_dump --batch --mode decoded --text-encoding cp932
 ```
 
-### 3. 回编固定表文本
+目标：
+把可编辑文本导出成 JSON。
+输入：
+解包后的 `files\` 资源树。
+输出：
+`.\text_dump\script\*.json`
+`.\text_dump\data\*.json`
+下一步：
+直接修改这些 JSON 里的 `text` 字段。
+
+批量回编文本：
 
 ```powershell
-python .\tev2_compile.py .\table_dump\tiNameSp.json .\table_rebuild\tiNameSp.dat --text-encoding cp932
+python .\tev2_compile.py .\text_dump .\text_rebuild --batch --mode decoded --text-encoding gbk
 ```
 
-### 4. 导出 `BtText.dat`
+目标：
+把修改后的 JSON 回编成 `.scr/.dat` 资源。
+输入：
+批量导出的 JSON 目录。
+输出：
+`.\text_rebuild\script\*.scr`
+`.\text_rebuild\data\*.dat`
+下一步：
+把这些结果覆盖回你的资源树，再进入你自己的封包链。
+
+**正式入口**
+
+`tev2_unpack.py`
 
 ```powershell
-python .\tev2_decompile.py .\pak0_game00\files\data\BtText.dat .\bttext_probe\BtText.json --text-encoding cp932
+python .\tev2_unpack.py .\game\game01.dat .\pak0_game01
 ```
 
-### 5. 回编 `BtText.dat`
+目标：
+恢复 `game01.dat` 的资源树。
+输入：
+单个 `gameXX.dat`。
+输出：
+目标目录下的 `manifest.json` 与 `files\`。
+下一步：
+对 `files\` 继续做批量导出或二进制导出。
+
+`tev2_decompile.py`
 
 ```powershell
-python .\tev2_compile.py .\bttext_probe\BtText.json .\bttext_probe\BtText_rebuild.dat --text-encoding cp932
+python .\tev2_decompile.py .\pak0_game01\files .\text_dump_game01 --batch --mode decoded --text-encoding cp932
 ```
 
-### 6. 导出 `.scr` 文本候选
+目标：
+批量导出正式可编辑文本。
+输入：
+资源树根目录。
+输出：
+镜像结构的 JSON 目录。
+下一步：
+修改 JSON 后用 `tev2_compile.py` 回编。
+
+指定目标编码回写示例：
 
 ```powershell
-python .\tev2_decompile.py .\pak0_game00\files\script\start.scr .\scr_probe\start.json --text-encoding cp932
+python .\tev2_compile.py .\text_dump_game01 .\text_rebuild_game01 --batch --mode decoded --text-encoding gbk
 ```
 
-输出意义：
-- 当前只导出结构化反序列化确认过的 `.scr` 文本节点
+目标：
+按指定目标编码批量回编。
+输入：
+JSON 文本目录。
+输出：
+批量回编后的 `.scr/.dat`。
+下一步：
+回填到资源树并进入封包链。
 
-### 7. 回编 `.scr`
+二进制模式仍然保留，但只作为正式辅助入口：
 
 ```powershell
-python .\tev2_compile.py .\scr_probe\start.json .\scr_probe\start_patched.scr --text-encoding cp932
+python .\tev2_decompile.py .\pak0_game00\files .\decoded_dump --batch --mode decoded-binary
+python .\tev2_compile.py .\decoded_dump .\decoded_rebuild --batch --mode decoded-binary --source .\pak0_game00\files
+python .\tev2_decompile.py .\pak0_game00\files .\raw_dump --batch --mode raw-binary
+python .\tev2_compile.py .\raw_dump .\raw_rebuild --batch --mode raw-binary
 ```
 
-### 8. 修改单条文本
-
-```powershell
-python .\tev2_patch_text.py .\scr_probe\start.json .\scr_probe\start_patched.json --entry-index 0 --text "TEST OVER"
-```
-
-### 9. 长度检查
-
-```powershell
-python .\tev2_check_text_fit.py .\scr_probe\start.json --entry-offset 361 --text "終幕" --text-encoding cp932
-python .\tev2_fit_report.py .\scr_probe\start.json .\scr_probe\start_fit_report.json --extra-bytes 4 --text-encoding cp932
-```
-
-## 正式验证
-
-### 默认总回归
+**默认验证**
 
 ```powershell
 python .\regression_test.py
 ```
 
-覆盖：
-- 固定表 roundtrip
-- `BtText.dat` roundtrip / 可变长 / `gbk`
-- `.scr` 文本导出 / 回写 / 长文本扩容
+目标：
+验证默认正式主路径。
+输入：
+当前 title 根目录下的 `game00.dat` / `game01.dat`。
+输出：
+终端 `PASS`。
+下一步：
+若通过，可按 README 主路径直接做文本汉化。
 
-### 重型验证入口
+当前默认验证本地覆盖：
 
-全脚本正文首/末条长文本：
+- `game00 + game01` 的脚本文本零漏提校验
+- `.scr` 全量回写快验
+- `BtText.dat / tiName*.dat / tiBalloon*.dat` roundtrip 与编码回写
+- 批量导出 / 批量回编 / 二进制辅助模式
 
-```powershell
-python .\tev2_all_scripts_edge_regression.py --chunk-index 0 --chunk-count 3
-python .\tev2_all_scripts_edge_regression.py --chunk-index 1 --chunk-count 3
-python .\tev2_all_scripts_edge_regression.py --chunk-index 2 --chunk-count 3
-```
-
-混合型脚本正文首/末条长文本：
-
-```powershell
-python .\tev2_mixed_scripts_edge_regression.py
-```
-
-全脚本正文分层点位长文本：
-
-```powershell
-python .\tev2_all_scripts_stratified_regression.py --chunk-index <0-based> --chunk-count <N> [--script-start <i>] [--script-end <j>]
-```
-
-全脚本正文单条长文本：
-
-```powershell
-python .\tev2_all_scripts_single_entry_regression.py --chunk-index <0-based> --chunk-count <N> [--script-start <i>] [--script-end <j>] [--entry-start <a>] [--entry-end <b>]
-```
-
-全脚本正文单条短文本：
-
-```powershell
-python .\tev2_all_scripts_single_entry_short_regression.py --chunk-index <0-based> --chunk-count <N> [--script-start <i>] [--script-end <j>] [--entry-start <a>] [--entry-end <b>]
-```
-
-## 当前边界
-
-- 当前目标是“文本汉化链可用”，不是完整 `.scr` opcode / operand 语义恢复
-- `Script.dat` 仍未正式收敛成独立总脚本包结论
-- 当前正式文本模型只包含结构化确认过的文本节点
-
-## 文档
+**文档**
 
 - [docs/README.md](D:/Code/VN_Reverse/titles/月神楽/docs/README.md)
 - [docs/tev2_script_结构.md](D:/Code/VN_Reverse/titles/月神楽/docs/tev2_script_结构.md)
 - [docs/tev2_script_用法.md](D:/Code/VN_Reverse/titles/月神楽/docs/tev2_script_用法.md)
 - [docs/tev2_script_验证.md](D:/Code/VN_Reverse/titles/月神楽/docs/tev2_script_验证.md)
+- [docs/tev2_archive_结构.md](D:/Code/VN_Reverse/titles/月神楽/docs/tev2_archive_结构.md)
+- [docs/tev2_archive_用法.md](D:/Code/VN_Reverse/titles/月神楽/docs/tev2_archive_用法.md)
+- [docs/tev2_archive_验证.md](D:/Code/VN_Reverse/titles/月神楽/docs/tev2_archive_验证.md)
