@@ -1,20 +1,18 @@
-# Pipeline
+# 汉化流水线
 
-## Scope
+## 范围与固定规则
 
-Use this workflow for title-specific visual novel localization projects that require reverse engineering, script editing, archive handling, runtime patching, packaging, and long-term maintainability.
+用于需要逆向、脚本编辑、归档处理、运行时补丁、打包和长期维护的具体游戏汉化项目。
 
-## Hard rules
+1. 不删除原版、译文、静态资源、缓存输入、未知手工文件或原有存档。每次构建仅允许按下述边界清理本构建器已认证的旧生成产物。
+2. 最终维护流程只依赖项目内路径。
+3. 文档命令以游戏项目根目录为基准，使用相对路径。
+4. 无回归结果不得宣称完成。
+5. 文本不能编辑并重新编译时，脚本阶段不算完成。
 
-1. Never run delete operations.
-2. Never rely on non-project local paths in the final maintained workflow.
-3. Keep commands in docs relative to the title root.
-4. Do not claim completion without regression results.
-5. If text is not editable and compilable, the script stage is not done.
+## 游戏项目布局
 
-## Title project layout
-
-Use this structure as the target state unless the repo already has a stronger established convention:
+除非已有更明确的项目约定，采用以下结构：
 
 ```text
 title-root/
@@ -30,176 +28,98 @@ title-root/
     decrypt/
     unpack/
     build/
+      build_cleanup.py
+      README.md
     patch/
       base/
         chs_patch/
         chs_patch_manifest.txt
     runtime/
+  out/
+    package_<run_id>/
+    validation_<run_id>/
 ```
 
-### Layout rules
+- 根目录只保留必要入口，真正实现放在 `solution/`。
+- 分离解密、解包、构建、静态补丁和运行时源码。
+- 游戏密钥放在项目内，不依赖外部共享目录。
+- `game/` 是本地输入，不是待提交产物。
+- `solution/build/` 是构建源码目录，不是可清理的构建产物。
+- `out/` 是示例输出根，可按项目调整；清理只涉及其下已认证的顶层目录，绝不删除整个根。
 
-- Keep root entry points minimal.
-- Put actual implementation under `solution/`.
-- Separate `decrypt`, `unpack`, `build`, `patch`, and `runtime`.
-- Store per-title keys under the project, not in external shared folders.
-- Treat `game/` as local input, not a committed artifact.
+## 逆向与脚本顺序
 
-## Reverse-engineering order
+1. 确认引擎。
+2. 确认归档或容器格式。
+3. 确认脚本格式。
+4. 确认编码与控制序列。
+5. 确认密钥和引擎加密方式。
+6. 理解脚本与资源加载之后，再确定运行时补丁方案。
 
-1. Identify engine.
-2. Identify archive/container format.
-3. Identify script format.
-4. Identify text encoding and control sequences.
-5. Identify keys or engine-specific crypto if present.
-6. Identify runtime patch strategy only after script and resource loading are understood.
+脚本结构与可编辑回环优先，其次为归档解包与重建，再次为运行时程序或 DLL 补丁；次要界面和图片资源在脚本链稳定后处理。
 
-### Priority
+指令型格式同时输出可编辑 JSON 和可读指令源码。格式允许时，未修改反编译结果必须能逐字节回编一致；编辑文本后不得靠手工修补偏移运行，编译器必须重算长度、偏移、表项和元数据。
 
-- Script structure and editable roundtrip first.
-- Archive pack/unpack second.
-- Runtime executable or DLL patching third.
-- Secondary UI or image resources after the script pipeline is stable.
+文本无法提取为可编辑形式、编辑后无法编译、应当一致却无法原样回环，或文本变化因旧长度与偏移导致运行时损坏时，都视为脚本链失败。
 
-## Script pipeline requirements
+## 编码与过滤
 
-### Required outputs
+- 区分 `cp932`、`Shift_JIS`、`win-31j`、UTF-16 和 UTF-8。
+- 日文旧编码源脚本需要有文档的 `gbk` 目标回写方式；UTF-16 或 UTF-8 流水线没有需要时不额外引入该路径。
+- 可编辑输入旁存在 `filter_text.txt` 时，按 UTF-8 逐行读取，并由项目明确采用精确匹配或子串匹配。
+- 命中过滤条目的文本按源编码回写，其余文本按请求的目标编码回写。
+- 回归覆盖过滤与未过滤的回写情况。
 
-Produce both of these when the format is instruction-oriented:
+## 运行时补丁
 
-1. Editable JSON
-2. Readable instruction source
+根据游戏选择资源覆盖、新启动程序加运行时 DLL、代理 DLL，或迁移现有可靠补丁布局。
 
-### Required guarantees
+- 可运行汉化交付所需的新运行时二进制从源码构建。
+- 必须保留外部二进制时，注明准确上游来源、版本和永久链接。
+- 已有可靠覆盖范围与结构时沿用该行为，不重新猜测。
+- KiriKiri 项目原有可靠方案若重定向到包，保留包重定向；覆盖文件由清单决定，不自动覆盖资源树中的全部内容。
 
-- Decompile -> compile must reproduce the source when unchanged.
-- Editable text must survive compile without manually patching offsets.
-- Recompiler must rebuild sizes, offsets, tables, and related metadata.
-- If strings embed control tokens, preserve token handling explicitly.
+## 构建前清理
 
-### Failure conditions
+按 `build-cleanup.md` 接入独立模块。每次构建或打包必须按以下顺序执行：
 
-Treat the script pipeline as failed if any of these is true:
+1. 解析项目根、显式输出根和本次 `run_id`，排除当前运行及本次输出。
+2. 在生成新的完整游戏副本或包之前，列出并完整检查旧产物清理计划。
+3. 默认清理已认证的旧构建、发布、打包与完整验证副本；`--keep-previous-outputs` 显式保留，`--dry-run` 仅展示计划并结束。
+4. 清理成功后，通过 `generated_output(...)` 独占新建本轮目录，再复制完整游戏与构建补丁。
+5. 上下文正常或异常退出时封存实际目录与文件清单；普通复制失败的半成品在下一轮可清理，原异常继续抛出。已有未知目录不得认领，进程强杀等未封存目录继续保留。
+6. 运行验证；一次性副本内的测试存档、日志等可变位置必须提前逐项登记。
 
-- text cannot be extracted in editable form
-- edited text cannot compile back
-- unchanged source cannot roundtrip byte-identically when that property is expected
-- changed text breaks runtime reads due to stale lengths or offsets
+清理目标必须同时满足：位于项目内显式输出根的直接子目录、名称可识别、标记匹配本构建器和路径、普通文件清单与当前内容一致。输入目录、项目根、越界、异常名称、符号链接、联接点和重解析点全部拒绝；先完成整批预检，再由同一 Python 进程执行递归删除。清理失败时构建必须失败。
 
-## Encoding and filtering
+JSON 标记属于可信本地构建约定，不是防恶意伪造的签名认证；构建代码和输出目录需要由可信进程维护。
 
-### Encodings
+普通目录出现未知手工文件或修改后保留整个目录；副本内明确可变的文件或子树允许正常运行后继续清理，但仍检查所有链接。不得把原版存档或用户保留的存档列为可变产物。独立文件、上传压缩包、输入解包缓存、其他构建器或未认证的历史目录始终保留。禁止整删输出根、临时根或给未知旧目录补写认证标记。
 
-- Detect whether the source is `cp932`, `Shift_JIS`, `win-31j`, UTF-16, or UTF-8.
-- If the source is Japanese legacy encoding, provide a documented target-encoding path for `gbk`.
-- Do not add `gbk` writeback examples to UTF-16 or UTF-8 pipelines unless specifically needed.
+新项目生成器复制模块与说明到 `solution/build/`，保留已有文件。接入现有项目时先比较本地版本；同一输出目录清理期间不得并发构建或运行。
 
-### Filter list
+## 文档
 
-If `filter_text.txt` exists beside the editable inputs:
+每个项目说明脚本或归档结构、密钥格式、工具职责、实际已提交目录、构建依赖与顺序、增量更新方式、最终包布局，以及构建前清理方式和调试保留开关。
 
-- treat it as UTF-8
-- treat it as line-based exact-match or substring-match logic defined by the title pipeline
-- when text matches a filter entry, write it back using source encoding
-- when text does not match, use the requested target encoding
+表述直接，删除无助于维护的说明；来源采用永久上游链接。Mermaid 只在有助于理解时使用，并验证语法。
 
-Add regression coverage for filtered and unfiltered cases.
+## 回归验证
 
-## Runtime patch strategy
+最少验证：
 
-### Decide the target
+1. 脚本反编译与回编。
+2. 归档解包与重建。
+3. 运行时包冒烟。
+4. 过滤编码回写。
+5. 旧产物清理的边界、当前运行排除、调试保留和预览。
 
-Choose one of these based on the title:
+格式允许时验证逐字节一致；否则验证结构等价或运行时可读取，并为失败提供明确日志。重建归档应重新解包对比，重建脚本应重新反编译，代理 DLL 应验证导出，需要自定义存档重定向时验证路径行为。
 
-1. Resource-only patch
-2. New launcher exe plus runtime DLL
-3. Proxy DLL only
-4. Existing working patch layout migrated into new tooling
+清理回归使用真正临时目录，覆盖旧产物删除、受保护输入、越界、符号链接或联接点、陌生文件保留、显式可变位置、完整预检失败时零删除和当前输出排除。不得为了测试直接清理现有游戏项目的输出。
 
-### Rules
+## 提交与完成边界
 
-- If the final deliverable is a playable localized program, build new runtime binaries from source.
-- Prefer source-based reproducibility over opaque prebuilt binaries.
-- If external binaries remain necessary, document exact upstream origin, version, and permanent links.
-- If an existing patch already works, preserve its override scope and structure instead of inventing a new layout.
+可提交源码、文档、译文输入、原始静态补丁资源、清单和项目密钥；不得提交构建包、生成的 `exe`、`dll`、`xp3` 等发布二进制、本地工具缓存和临时构建目录。
 
-### KiriKiri-style guidance
-
-- If a known-good patch redirects to a package, keep package redirection unless there is a strong reason to switch.
-- Use a manifest to define which files override.
-- Do not auto-override every file under a resource tree.
-
-## Documentation rules
-
-### Required docs
-
-For each title, document:
-
-- script or archive structure
-- key format if present
-- tool roles
-- repo structure that is actually committed
-- build dependencies
-- build order
-- incremental update workflow
-- final package layout
-
-### Style
-
-- Be direct.
-- Remove filler headings and decorative text.
-- Replace local source paths in attribution sections with permanent upstream links.
-- Use Mermaid only when it adds value and validate syntax.
-
-## Regression checklist
-
-### Minimum required
-
-1. script decompile -> compile
-2. archive unpack -> repack
-3. runtime package smoke test
-4. filtered encoding writeback
-
-### Expected forms
-
-- byte-identical roundtrip when unchanged and the format permits it
-- structured equality or runtime readability when exact bytes are not expected
-- explicit logs or summary output for failures
-
-### Packaging verification
-
-- unpack rebuilt archive and compare files
-- re-decompile rebuilt script outputs
-- validate runtime binary exports if using proxy DLLs
-- verify save path behavior when custom save redirection is required
-
-## Commit boundaries
-
-Commit:
-
-- source code
-- docs
-- translation inputs
-- raw static patch resources
-- manifests
-- keys that belong to the title project
-
-Do not commit:
-
-- built packages
-- generated `exe`, `dll`, `xp3`, or equivalent release binaries
-- local tool caches
-- temporary build work directories
-
-## Completion checklist
-
-Before claiming the title pipeline is complete:
-
-- script text is editable
-- script text recompiles
-- key handling is documented if present
-- archive handling is implemented
-- runtime packaging is implemented when needed
-- README usage is relative
-- source attributions are permanent links
-- regression results are current
+报告完成前，确认文本可编辑并回编、密钥处理已说明、归档链已实现、必要运行时已打包、README 用法使用相对路径、来源是永久链接、构建前清理已经接入且回归结果是当前结果。

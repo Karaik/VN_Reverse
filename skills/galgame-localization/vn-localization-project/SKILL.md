@@ -1,79 +1,73 @@
 ---
 name: vn-localization-project
-description: Build or reorganize a reproducible visual novel or galgame localization project with reverse engineering, editable script roundtrip, runtime patch packaging, source attribution, and regression validation. Use when starting a new title, migrating a legacy patch chain, defining project structure, documenting formats, or preparing tools and tests for script, archive, and runtime localization.
+description: 用于新建、迁移或扩展可重复构建的视觉小说汉化项目，涵盖脚本可编辑回环、资源归档、运行时补丁、构建前旧产物清理、打包、来源说明和回归验证。
 ---
 
-# VN Localization Project
+# 视觉小说汉化项目
 
-Use this skill when the task is to establish, normalize, or extend a title-specific galgame localization pipeline.
+适用于建立、整理或扩展具体游戏的汉化流水线。
 
-## Start
+## 开始
 
-- Enforce the strongest rule first: never run delete operations or commands that can remove user data.
-- Read `references/pipeline.md` before making structural decisions, writing tools, changing packaging behavior, or preparing commits.
-- Treat an existing working patch as the behavioral baseline. Migrate the execution chain around it instead of guessing override scope from scratch.
+- 先阅读 `references/pipeline.md`，再决定结构、编写工具、修改打包行为或准备提交。
+- 原版、译文、静态资源、缓存输入、未知手工文件和原有存档均不得删除。唯一自动清理例外是本构建器已认证的旧生成产物，执行边界见 `references/build-cleanup.md`。
+- 将已有可运行补丁视为行为基线，围绕它迁移执行链，不凭空猜测覆盖范围。
 
-## Required workflow
+## 必需流程
 
-1. Identify the engine, archive format, script format, text encoding, key requirements, and runtime patch model.
-2. Normalize the title project so the final maintained workflow depends only on project-local relative paths.
-3. Prioritize script format reversal before secondary resources.
-4. Require editable script roundtrip before calling the script pipeline complete.
-5. Add runtime packaging when the final deliverable is a playable localization program instead of raw resources only.
-6. Write format and usage documentation while implementing, not after.
-7. Run regression validation on every critical pipeline stage before claiming completion.
-8. Commit only source, docs, translation inputs, and static patch resources. Do not commit built package binaries.
+1. 确认引擎、归档格式、脚本格式、文本编码、密钥需求与运行时补丁方式。
+2. 整理游戏项目，使最终维护流程仅依赖项目内相对路径。
+3. 优先逆向脚本格式，再处理次要资源。
+4. 脚本必须能编辑后重新编译，才能称为完成。
+5. 可运行汉化程序需要运行时补丁时，补齐源码构建与打包。
+6. 实现时同步编写结构与用法文档。
+7. 每次构建在产生新的完整游戏副本或包之前清理旧生成产物；先验证完整清理计划，再执行受限删除，并排除本次运行。
+8. 关键阶段都通过回归验证后，才能报告完成。
+9. 只提交源码、文档、译文输入和静态补丁资源，不提交构建后的包或二进制。
 
-## Non-negotiable rules
+## 固定规则
 
-- Do not use delete operations.
-- Do not hardcode external absolute project paths in the final maintained pipeline.
-- Keep final usage commands relative.
-- Keep file names short and clear.
-- Keep code comments sparse and functional; remove explanatory filler.
-- Keep code log and prompt strings in English unless a file is explicitly documentation.
-- Keep documentation direct; avoid decorative filler text.
+- 使用 `scripts/build_cleanup.py` 或满足相同边界的实现清理旧输出；禁止整删输出根、临时根或输入缓存。
+- 默认仅清理显式输出根下顶层、名称可识别、标记和清单证明由本构建器生成的旧目录；未认证内容保留。
+- 严格解析项目内路径，拒绝根目录、受保护输入、异常名称、越界、符号链接、联接点和重解析点；先完整预检，再通过同一 Python 进程删除。
+- 构建入口必须提供 `--keep-previous-outputs` 和 `--dry-run`；预览之后不再产生新完整副本。不安全路径或清理失败必须中止构建。
+- 测试存档和日志只可在一次性生成副本内以明确文件或子树登记为 `mutable_paths`；不得登记原版或用户保留的存档。
+- 用 `generated_output(...)` 独占新建本轮输出目录，并在正常或异常退出时封存实际清单，使普通构建失败的半成品可在下一轮清理；不得认领历史未知目录。JSON 标记是可信本地流程约定，不抵抗恶意伪造。
+- 最终维护流程不得硬编码外部项目绝对路径；用法示例使用相对路径。
+- 文件名称简短明确，代码注释简洁且服务于实现。
+- 代码日志与提示使用英文，说明文档使用中文。
 
-## Script requirements
+## 脚本与编码
 
-- Decompile and compile must actually process script text. If the text cannot be edited and compiled back, treat the script pipeline as failed.
-- If the script format is instruction-based, provide both:
-  - JSON form for structured editing
-  - Readable instruction-source form for low-level inspection
-- Recompilation must recalculate lengths, offsets, and tables so text length changes do not break runtime reads.
+- 反编译和编译必须真正处理文本，文本不能编辑后回编即视为脚本链失败。
+- 指令型格式同时提供结构化 JSON 和可读指令源码。
+- 回编重算长度、偏移和表项，避免文本变长破坏运行时读取。
+- 源脚本为 `cp932`、`Shift_JIS`、`win-31j` 等日文旧编码时，提供有文档的 `gbk` 回写路径。
+- 可编辑输入旁存在 `filter_text.txt` 时，将其作为 UTF-8 逐行过滤表；匹配文本按源编码回写，其他文本按目标编码回写，并覆盖回归测试。
 
-## Encoding requirements
+## 运行时与文档
 
-- When the source script text uses Japanese legacy encodings such as `cp932`, `Shift_JIS`, or `win-31j`, provide a documented target-encoding writeback path for `gbk`.
-- If `filter_text.txt` exists beside the editable input, treat it as a UTF-8 line-based filter list. Matched text must be written back with source encoding, not target encoding.
-- Include regression coverage for filtered writeback behavior.
+- 最终汉化依赖运行时二进制时，从源码编译新二进制。
+- 因兼容性保留旧二进制时，注明准确来源、版本和永久源码链接。
+- 复用已有可靠补丁布局，围绕该布局驱动工具。
+- 清楚说明二进制结构；需要 Mermaid 时保持图示最小且语法有效。
+- 来源说明使用永久上游链接。
+- 游戏 README 说明已提交目录、构建依赖与顺序、补丁输入、增量文本与静态资源更新方式、输出位置及旧输出清理开关。
 
-## Runtime requirements
-
-- If the final playable patch requires runtime binaries, compile new runtime binaries from source.
-- If old binaries are reused for compatibility, document exact origin, version, and permanent source links.
-- If a title already has a known-good patch layout, use that layout and drive new tooling around it.
-
-## Documentation requirements
-
-- Document binary structures clearly.
-- If Mermaid is used, keep it syntactically valid and minimal.
-- Replace local-source references in docs with permanent upstream links.
-- In the title README, document:
-  - committed repo structure
-  - build dependencies
-  - build order
-  - patch inputs
-  - incremental update workflow for text and static resources
-
-## Read next
-
-- Read `references/pipeline.md` for the full checklist, structure template, testing rules, packaging rules, and commit boundaries.
-
-## Scaffold helper
-
-Use `scripts/generate_title_layout.py` to create the standard directory layout from `references/pipeline.md`.
+## 项目生成器
 
 ```powershell
 python .\skills\galgame-localization\vn-localization-project\scripts\generate_title_layout.py ".\titles\<游戏名>"
+```
+
+生成器创建标准目录，并将清理模块与中文接入说明复制到 `solution/build/build_cleanup.py`、`solution/build/README.md`，保留已有文件。生成器本身不执行任何旧产物清理。
+
+## 参考与验证
+
+- 完整流程、模板、测试和提交边界：`references/pipeline.md`
+- 清理模块接口、认证边界和接入示例：`references/build-cleanup.md`
+- 模块与生成器的真实临时目录回归：
+
+```powershell
+python -m unittest discover -s .\skills\galgame-localization\vn-localization-project\tests -v
 ```

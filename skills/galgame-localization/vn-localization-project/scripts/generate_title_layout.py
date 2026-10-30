@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+import shutil
 
 DEFAULT_DIRS = [
     Path('game'),
@@ -29,6 +30,14 @@ def ensure_dir(path: Path) -> None:
     path.mkdir(parents=True, exist_ok=True)
 
 
+def copy_template(source: Path, target: Path) -> None:
+    if target.exists():
+        print(f'Preserve existing file: {target}')
+        return
+    with source.open('rb') as reader, target.open('xb') as writer:
+        shutil.copyfileobj(reader, writer)
+
+
 def main() -> int:
     args = parse_args()
     root = Path(args.title_root).resolve()
@@ -36,6 +45,10 @@ def main() -> int:
 
     for rel_path in DEFAULT_DIRS:
         ensure_dir(root / rel_path)
+
+    skill_root = Path(__file__).resolve().parents[1]
+    copy_template(skill_root / 'scripts' / 'build_cleanup.py', root / 'solution' / 'build' / 'build_cleanup.py')
+    copy_template(skill_root / 'references' / 'build-cleanup.md', root / 'solution' / 'build' / 'README.md')
 
     print(root)
     return 0
