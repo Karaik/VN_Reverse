@@ -16,3 +16,6 @@
 [submodule "titles/dc4_fd_chineseization"]
 	path = titles/dc4_fd_chineseization
 	url = https://github.com/Karaik/dc4_fd_chineseization.git
+[submodule "titles/dc5_to4_chineseization"]
+	path = titles/dc5_to4_chineseization
+	url = https://github.com/Karaik/dc5_to4_chineseization.git
