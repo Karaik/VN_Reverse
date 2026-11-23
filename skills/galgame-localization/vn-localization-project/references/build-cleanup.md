@@ -2,7 +2,7 @@
 
 每次构建必须先检查并清理本构建器产生的旧构建目录、发布包和完整验证副本，再产生新的完整游戏副本或包。清理只处理显式输出根的直接子目录；原版、译文、静态资源、缓存输入、上传压缩包和原有存档始终保留。
 
-`build_cleanup.py` 是仅依赖 Python 3.10 及以上版本标准库的独立模块，复制到 `solution/build/` 后可直接使用。以下示例代码放入游戏项目根目录的 `main_build.py`，命令均在游戏项目根目录执行。
+`build_cleanup.py` 是仅依赖 Python 3.10 及以上版本标准库的独立模块，复制到 `solution/build/` 后可直接使用。以下示例代码放入游戏项目根目录的 `main_build.py`。假设该作仅需将已构建的 `out/staging/patch.xp3` 安装到游戏根目录，多文件补丁按本作的发布清单复制。
 
 ## 构建器接入
 
@@ -46,12 +46,11 @@ with generated_output(
     builder_id=BUILDER_ID,
     run_id=run_id,
     kind="package",
-    mutable_paths=("savedata_cn/**", "override/patch.log"),
 ) as package:
-    shutil.copytree(ROOT / "game", package, dirs_exist_ok=True)
-    # Build and copy the title's patch files inside this context.
-# Run smoke tests after the context has sealed the output.
+    shutil.copy2(ROOT / "out" / "staging" / "patch.xp3", package / "patch.xp3")
 ```
+
+分发压缩包只收发布清单里的文件。`.vn-build-output.json` 留在本地供清理模块使用。需要实机测试时，另建 `kind="validation"` 的目录，放入原版运行资源并按玩家安装路径应用补丁。仅在这个一次性副本中登记本作实际生成的存档或日志为 `mutable_paths`，使用独立测试存档。
 
 `generated_output` 先验证路径，再通过 `mkdir(exist_ok=False)` 精确新建目录；已有目录立即失败，不会被补写标记。输出根可以不存在，由模块在验证后创建。上下文退出时核对目录身份，只封存本轮创建且仍存在的同一目录；已登记的本轮标记经核对后保留，不重复写入。复制和补丁普通异常会原样抛出，不在失败处理期间删除目录；封存同时失败时报告封存错误并保留原构建异常。强杀进程或断电可能来不及封存，这类无标记目录仍按未知内容保留，不能事后仅凭名称补标记。
 
