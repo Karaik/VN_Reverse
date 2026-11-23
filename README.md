@@ -24,6 +24,7 @@
 |---|---|
 | [`docs/README.md`](./docs/README.md) | 仓库级文档总入口 |
 | [`titles/`](./titles) | 按 title / 项目划分的主工作目录 |
+| [`engines/`](./engines) | 跨作品使用的引擎工具 |
 | [`skills/README.md`](./skills/README.md) | 代理技能总入口 |
 | [`AGENT.md`](./AGENT.md) | 仓库级协作规则 |
 
@@ -41,8 +42,8 @@
 
 独立引擎工具、解析器、查看器。
 
-- [`engines/NeXAS/NeXAS_DX`](./engines/NeXAS/NeXAS_DX)
-- [`engines/NeXAS/NeXAS_SPM_VIEWER`](./engines/NeXAS/NeXAS_SPM_VIEWER)
+- `NeXAS_DX` 用于在 NeXAS 游戏资源与 JSON 之间转换，各作支持的格式见[中文说明](https://github.com/Karaik/NeXAS_DX/blob/d2b5a9f53c86cc36ec17c27baf8f187454b409b9/README_zh.md)。
+- `NeXAS_SPM_VIEWER` 用于浏览 `.spm` 的页面、动画和命中区域，支持逐帧查看及 PNG 导出。[查看器项目](https://github.com/Karaik/NeXAS_SPM_VIEWER)
 
 ### `skills/`
 
@@ -60,56 +61,52 @@
 
 - 仓库级规则：[`AGENT.md`](./AGENT.md)
 - 文档索引：[`docs/README.md`](./docs/README.md)
-- 汉化项目规则：[`docs/project-types/localization.md`](./docs/project-types/localization.md)
+- 汉化项目的构建、验证与旧输出清理见[汉化项目规则](./docs/project-types/localization.md)。
 - 逆向项目规则：[`docs/project-types/reverse.md`](./docs/project-types/reverse.md)
 - 协作约定：[`docs/workflows/git-issue-pr.md`](./docs/workflows/git-issue-pr.md)
 - 困难脚本转向策略：[`docs/workflows/hard-script-pivot.md`](./docs/workflows/hard-script-pivot.md)
 - `skills/` 目录规范：[`docs/skills-layout.md`](./docs/skills-layout.md)
 - 技能总览：[`skills/README.md`](./skills/README.md)
 
-## titles 一览
+## 作品一览
 
-完成度说明：
-
-- `完成`
-  - 指对应项目类型已经达到规则文档里定义的正式测试链要求。
-  - 汉化项目见：[汉化项目规则](./docs/project-types/localization.md)
-  - 逆向项目见：[逆向项目规则](./docs/project-types/reverse.md)
-- 如果还没达到规则里的完整回环或完整验证，就不写“完成”，只写当前实际做到哪一步。
+`main` 的 `titles/` 下有 6 个主库直接维护的项目和 6 个汉化子模块。下表按各项目的说明和验证记录列出可用范围。
 
 ### 仓库内项目
 
-| 类型 | 引擎 | 项目/游戏 | 路径 | 内部 README | 完成度 |
-|---|---|---|---|---|---|
-| `逆向项目` | `Family Adv System` | `夏幻の恋` | [`夏幻の恋`](./titles/夏幻の恋) | [`README.md`](./titles/夏幻の恋/README.md) | `资源树 + 脚本链已通` |
-| `逆向项目` | `SAISYS` | `黒の十字架` | [`黒の十字架`](./titles/黒の十字架) | [`README.md`](./titles/黒の十字架/README.md) | `脚本链已通；零漏提已验证` |
-| `逆向项目` | `Studio_e-go_V2` | `月神楽` | [`月神楽`](./titles/月神楽) | [`README.md`](./titles/月神楽/README.md) | `文本汉化链已通；以文本为主` |
-| `逆向项目` | `Yuka engine` | `２４時君のハートは盗まれる～怪盗ジェイド～` | [`２４時君のハートは盗まれる～怪盗ジェイド～`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～) | [`README.md`](./titles/２４時君のハートは盗まれる～怪盗ジェイド～/README.md) | `资源包 + 脚本链已通` |
-| `逆向项目` | `NEJII` | `比翼は愛薊の彼方へ 久遠の想` | [`比翼は愛薊の彼方へ 久遠の想`](./titles/比翼は愛薊の彼方へ%20久遠の想) | [`README.md`](./titles/比翼は愛薊の彼方へ%20久遠の想/README.md) | `资源包 + 脚本链已通` |
-| `逆向项目` | `SHSystem` | `マスカレード` | [`マスカレード`](./titles/マスカレード) | [`README.md`](./titles/マスカレード/README.md) | `资源链已通；脚本仍在探针阶段` |
-| `汉化项目` | `YU-RIS` | `ユニオリズム・カルテットB2-STYLE` | [`ユニオリズム・カルテットB2-STYLE`](./titles/ユニオリズム・カルテットB2-STYLE) | [`README.md`](./titles/ユニオリズム・カルテットB2-STYLE/README.md) | `完成` |
+| 项目说明 | 类型 | 引擎 | 当前范围 |
+|---|---|---|---|
+| [夏幻の恋](./titles/夏幻の恋/README.md) | 逆向项目 | Family Adv System | 恢复 CSAF 资源树，批量导出和回编 ADB 脚本，按需回封修改后的资源。 |
+| [黒の十字架](./titles/黒の十字架/README.md) | 逆向项目 | SAISYS | 已验证 `CODE.SSB`、`DATA.SSB` 回环，以及正文、显示名和选项的变长回写。 |
+| [月神楽](./titles/月神楽/README.md) | 逆向项目 | Studio_e-go_V2 | 批量处理 `game00.dat` 和 `game01.dat` 中的 `script/*.scr`，已核对其中全部非 ASCII 文本槽位。 |
+| [２４時君のハートは盗まれる～怪盗ジェイド～](./titles/２４時君のハートは盗まれる～怪盗ジェイド～/README.md) | 逆向项目 | Yuka engine | YKC 资源包解包与回封，YKS 脚本支持 JSON 和指令源码两种回编路径。 |
+| [比翼は愛薊の彼方へ 久遠の想](./titles/比翼は愛薊の彼方へ%20久遠の想/README.md) | 逆向项目 | NEJII | RK1 资源包回封、脚本变长回写和目标编码回写。 |
+| [ユニオリズム・カルテットB2-STYLE](./titles/ユニオリズム・カルテットB2-STYLE/README.md) | 汉化项目 | YU-RIS | 已生成补丁包，并在游戏正文验证过一段中文。全量译文回归和姓名框显示仍待验证。[验证记录](./titles/ユニオリズム・カルテットB2-STYLE/docs/验证.md) |
 
-### 外部库（submodule）
+### 汉化项目子模块
 
-| 类型 | 引擎 | 项目/游戏 | 路径 | 内部 README | 完成度 |
-|---|---|---|---|---|---|
-| `汉化项目` | `SystemNNN` | `虫爱少女` 文本编辑器 | [`mushiai_chineseization`](./titles/mushiai_chineseization) | [`README.md`](./titles/mushiai_chineseization/README.md) | `外部库；当前形态是汉化相关工具入口` |
-| `汉化项目` | `SystemNNN` | `虫爱少女 FD 汉化项目` | [`mushiai_fd_chineseization`](./titles/mushiai_fd_chineseization) | [`README.md`](./titles/mushiai_fd_chineseization/README.md) | `外部库` |
-| `汉化项目` | `KiriKiri` | `真愛の百合は赤く染まる` | [`真愛の百合は赤く染まる`](./titles/真愛の百合は赤く染まる) | [`README.md`](./titles/真愛の百合は赤く染まる/README.md) | `外部库` |
+作品名链接到子库首页。本地检出时，Git 使用主库记录的提交。标为「私有」的子库需要相应的 GitHub 读取权限。
 
-### 待归类 / 待整理
+| 子库首页 | 引擎 | 本地目录（相对于 `titles/`） | 仓库状态 | 内容和发布情况 |
+|---|---|---|---|---|
+| [虫爱少女](https://github.com/Karaik/mushiai_chineseization) | SystemNNN | `mushiai_chineseization` | 公开，已归档 | 本篇的 JavaFX 汉化文本编辑器和人员名单。[编辑器 v1.0.6](https://github.com/Karaik/mushiai_chineseization/releases/tag/v1.0.6) |
+| [虫爱少女（完全版）](https://github.com/Karaik/mushiai_fd_chineseization) | SystemNNN | `mushiai_fd_chineseization` | 私有 | 1.0.0 已发布，收录六部 FD／特典和完全版内本篇的适配补丁。[绯月首发帖](https://kf.miaola.work/read.php?tid=1086472&sf=661) · [GitHub Release](https://github.com/Karaik/mushiai_fd_chineseization/releases/tag/v1.0.0) |
+| [真愛の百合は赤く染まる](https://github.com/Karaik/manakashi_chineseization) | KiriKiri | `真愛の百合は赤く染まる` | 私有 | 剧本正文和选项的回填、文本检查、界面资源与 XP3 补丁构建。 |
+| [D.C.4 Fortunate Departures](https://github.com/Karaik/dc4_fd_chineseization) | KiriKiri | `dc4_fd_chineseization` | 公开，已归档 | 全年龄版的汉化技术工具。可从自备原版提取文本和图片，当前归档保留工具源码。 |
+| [D.C.4 Sweet Harmony](https://github.com/Karaik/dc4_sh_chineseization) | KiriKiri | `dc4_sh_chineseization` | 私有 | 已验证剧本与系统文本回填、图片回封，以及中文样例在游戏内的显示。 |
+| [D.C.5 to 4 Luminous Memories](https://github.com/Karaik/dc5_to4_chineseization) | KiriKiri | `dc5_to4_chineseization` | 私有 | 已验证资源文件名恢复、剧本文本和图片回交，以及补丁构建。 |
 
-| 项目/游戏 | 路径 | 完成度 |
-|---|---|---|
-| `ガイザード・ファンディスク ～僕らの想いを詰め込んで～` | [`ガイザード・ファンディスク ～僕らの想いを詰め込んで～`](./titles/ガイザード・ファンディスク%20～僕らの想いを詰め込んで～) | `待归类；当前只有最小 README` |
-| `臨海合宿` | [`臨海合宿`](./titles/臨海合宿) | `待归类；当前只有最小 README` |
+### 历史开发记录与待整理作品
+
+- 《マスカレード》（SHSystem）的历史提交 `d21dcd9` 保留了 Him4/Him5 资源包的解包与回封工具，以及 Himauri 脚本的文本导出工具。变长写回的进度记录在 Issue #1。[历史版本的项目说明](https://github.com/Karaik/VN_Reverse/blob/d21dcd96644478c187a1bb3e05f1545b93ee0b8b/titles/マスカレード/README.md) · [Issue #1](https://github.com/Karaik/VN_Reverse/issues/1)
+- 《ガイザード・ファンディスク ～僕らの想いを詰め込んで～》和《臨海合宿》目前是待整理的占位题目。
 
 ## 推荐阅读顺序
 
 ### 看仓库
 
-1. 先读 [`AGENT.md`](./AGENT.md)
-2. 再看 [`docs/README.md`](./docs/README.md)
+1. 从 [`docs/README.md`](./docs/README.md) 找到任务对应的工作流
+2. 参与维护时阅读仓库协作规则 [`AGENT.md`](./AGENT.md)
 3. 如果任务涉及提交边界、issue / PR、验证说明，再看 [`docs/workflows/git-issue-pr.md`](./docs/workflows/git-issue-pr.md)
 4. 然后按项目类型进入对应规则
 
@@ -127,9 +124,17 @@
 
 ## 初始化
 
+克隆主库即可取得仓内项目和文档。以下命令同时初始化两个公开的 NeXAS 工具子模块。
+
 ```bash
-git clone --recurse-submodules <仓库地址>
+git clone https://github.com/Karaik/VN_Reverse.git
 cd VN_Reverse
+git submodule update --init --recursive -- engines/NeXAS/NeXAS_DX engines/NeXAS/NeXAS_SPM_VIEWER
+```
+
+作品子模块也可按上表路径单独初始化，例如 `git submodule update --init --recursive -- titles/dc4_fd_chineseization`。有全部子库读取权限时，在主库根目录同步并检出所有登记版本。
+
+```bash
 git submodule sync --recursive
 git submodule update --init --recursive
 ```
@@ -159,17 +164,18 @@ VN_Reverse/
 |   |-- reverse-projects/
 |   `-- reverse-engineering/
 `-- titles/
+    |-- dc4_fd_chineseization/
+    |-- dc4_sh_chineseization/
+    |-- dc5_to4_chineseization/
     |-- mushiai_chineseization/
     |-- mushiai_fd_chineseization/
     |-- 真愛の百合は赤く染まる/
+    |-- ユニオリズム・カルテットB2-STYLE/
     |-- 夏幻の恋/
     |-- 黒の十字架/
     |-- 月神楽/
     |-- ２４時君のハートは盗まれる～怪盗ジェイド～/
-    |-- 比翼は愛薊の彼方へ 久遠の想/
-    |-- マスカレード/
-    |-- ガイザード・ファンディスク ～僕らの想いを詰め込んで～/
-    `-- 臨海合宿/
+    `-- 比翼は愛薊の彼方へ 久遠の想/
 ```
 
 </details>
